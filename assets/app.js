@@ -236,7 +236,7 @@
         <p class="muted" style="margin:8px 0 0;max-width:640px">Вы управляете программами, уроками, возрастными сценариями, материалами и шаблонами заданий. Преподаватели работают по опубликованной версии.</p></div>
       <div class="row wrap">
         ${ref ? `<a class="btn lg" href="#lesson/${ref.id}/steps">${icon('layers', 16)}Урок 4 «Цвета»</a>` : ''}
-        <button class="btn dark lg" data-act="newMethod">${icon('plus', 17)}Новая методика</button>
+        <button class="btn dark lg" data-act="newMethod">${icon('plus', 17)}Создать курс</button>
       </div>
     </div>
     <div class="home-grid">
@@ -291,12 +291,12 @@
       <div><div class="eyebrow">Направление · Китайский язык</div><h1 style="margin-top:8px">Программы и методики</h1></div>
       <div class="row wrap">
         <div class="seg">${[['all', 'Все'], ['published', 'Опубликованы'], ['draft', 'В работе']].map(([k, t]) => `<button class="${f === k ? 'on' : ''}" data-act="filterMethods" data-v="${k}">${t}</button>`).join('')}</div>
-        <button class="btn dark" data-act="newMethod">${icon('plus', 15)}Новая методика</button>
+        <button class="btn dark" data-act="newMethod">${icon('plus', 15)}Создать курс</button>
       </div>
     </div>
     <div class="grid g3">
       ${list.map(methodCard).join('')}
-      <div class="card new-card" data-act="newMethod"><div><div class="avatar" style="margin:0 auto 12px;background:#c9ff4f">${icon('plus', 18)}</div><h3>Новая методика</h3><p class="small muted" style="max-width:240px">Для детского сада, школы, индивидуальных занятий или дополнительного курса</p></div></div>
+      <div class="card new-card" data-act="newMethod"><div><div class="avatar" style="margin:0 auto 12px;background:#c9ff4f">${icon('plus', 18)}</div><h3>Создать курс</h3><p class="small muted" style="max-width:240px">Для детского сада, школы, индивидуальных занятий или дополнительного курса</p></div></div>
     </div>`;
   }
   function methodCard(m) {
@@ -1037,21 +1037,21 @@
     filterMethods(d) { ui.methodsFilter = d.v; render(); },
 
     newMethod() {
-      modal(`${mh('Новая методика', 'Стандартизированный шаблон методики Shidao')}
+      modal(`${mh('Создать курс', 'Стандартизированный шаблон методики Shidao')}
         <div class="stack">
           <label class="field"><span>Название</span><input class="input" id="nmTitle" placeholder="Например: Китайский для дошкольников, 2-й год"></label>
           <div class="grid g2"><label class="field"><span>Сегмент</span><select class="select" id="nmSeg">${SEGMENTS.map((x) => `<option>${x}</option>`).join('')}</select></label><label class="field"><span>Возрастной сценарий</span><select class="select" id="nmAge">${S.scenarios.map((a) => `<option value="${a.id}">${esc(a.title)} · ${esc(a.age)}</option>`).join('')}</select></label></div>
           <label class="field"><span>Формат</span><input class="input" id="nmFormat" value="Группа 4–8 детей, 45 мин"></label>
           <label class="field"><span>Структура</span><select class="select" id="nmTpl"><option value="1">1 уровень · 1 модуль (пустая)</option><option value="3">3 уровня · по 2 модуля</option></select></label>
         </div>
-        <div class="modal-f"><button class="btn" data-act="closeModal">Отмена</button><button class="btn dark" data-act="createMethod">Создать методику</button></div>`);
+        <div class="modal-f"><button class="btn" data-act="closeModal">Отмена</button><button class="btn dark" data-act="createMethod">Создать курс</button></div>`);
       setTimeout(() => document.getElementById('nmTitle').focus(), 30);
     },
     createMethod() {
       const v = (id) => document.getElementById(id).value.trim();
       const levels = +v('nmTpl') === 3 ? [1, 2, 3].map((i) => ({ id: uid('v'), title: `Уровень ${i}`, modules: [1, 2].map((j) => ({ id: uid('d'), title: `Модуль ${(i - 1) * 2 + j}`, lessons: [] })) })) : [{ id: uid('v'), title: 'Уровень 1', modules: [{ id: uid('d'), title: 'Модуль 1', lessons: [] }] }];
-      const m = { id: uid('m'), title: v('nmTitle') || 'Новая методика', direction: 'Китайский язык', segment: v('nmSeg'), age: idx[v('nmAge')] ? idx[v('nmAge')].age : '', scenario: v('nmAge'), format: v('nmFormat'), description: '', status: 'draft', version: '0.1', updated: 'сегодня', accent: ['pink', 'blue', 'purple', 'green'][S.methods.length % 4], assigned: [], history: [{ v: '0.1', date: '03 ноя 2026', who: 'Е. Ли', note: 'Создана методика', status: 'draft' }], levels };
-      S.methods.push(m); reindex(); save(); closeModal(); go(`#method/${m.id}`); toast('Методика создана');
+      const m = { id: uid('m'), title: v('nmTitle') || 'Новый курс', direction: 'Китайский язык', segment: v('nmSeg'), age: idx[v('nmAge')] ? idx[v('nmAge')].age : '', scenario: v('nmAge'), format: v('nmFormat'), description: '', status: 'draft', version: '0.1', updated: 'сегодня', accent: ['pink', 'blue', 'purple', 'green'][S.methods.length % 4], assigned: [], history: [{ v: '0.1', date: '03 ноя 2026', who: 'Е. Ли', note: 'Создана методика', status: 'draft' }], levels };
+      S.methods.push(m); reindex(); save(); closeModal(); go(`#method/${m.id}`); toast('Курс создан');
     },
     addLevel(d) { const m = idx[d.id]; m.levels.push({ id: uid('v'), title: `Уровень ${m.levels.length + 1}`, modules: [{ id: uid('d'), title: 'Новый модуль', lessons: [] }] }); reindex(); save(); render(); },
     addModule(d) { const v = idx[d.id]; v.modules.push({ id: uid('d'), title: 'Новый модуль', lessons: [] }); reindex(); save(); render(); },
