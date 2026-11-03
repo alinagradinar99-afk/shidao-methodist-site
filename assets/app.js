@@ -241,7 +241,6 @@
     <div class="home-grid">
       <div class="stack" style="--gap:16px">
         ${ref && ref.status !== 'published' ? `<a class="card flat pending-card" href="#lesson/${ref.id}/steps">
-          <span class="num-big" style="width:52px;height:52px;font-size:22px;border-radius:16px">${numOf(ref)}</span>
           <div class="grow" style="min-width:0">
             <div class="row wrap" style="gap:8px"><span class="chip status-review"><span class="dot"></span>${ref.status === 'review' ? 'Ждёт публикации' : 'Черновик'}</span><span class="xs muted">${esc(methodOf(ref.id) ? methodOf(ref.id).title : '')} · v${esc(ref.version)}</span></div>
             <b style="display:block;margin-top:6px">Урок ${numOf(ref)} «${esc(ref.title)}»</b>
