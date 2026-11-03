@@ -235,7 +235,11 @@
       <div><div class="eyebrow">Кабинет методиста</div><h1 style="margin-top:8px">Добрый день, Елена!</h1>
         <p class="muted" style="margin:8px 0 0;max-width:640px">Вы управляете программами, уроками, возрастными сценариями, материалами и шаблонами заданий. Преподаватели работают по опубликованной версии.</p></div>
       <div class="row wrap">
-        ${ref && ref.status !== 'published' ? `<a class="pending-pill" href="#lesson/${ref.id}/steps" title="Открыть урок"><span class="chip status-review"><span class="dot"></span>${ref.status === 'review' ? 'Ждёт публикации' : 'Черновик'}</span><span>Урок ${numOf(ref)} «${esc(ref.title)}»</span>${icon('chev', 15)}</a>` : ''}
+        ${ref && ref.status !== 'published' ? `<a class="card flat pending-card" href="#lesson/${ref.id}/steps" title="Открыть урок">
+          <div class="row between" style="gap:8px"><span class="chip status-review"><span class="dot"></span>${ref.status === 'review' ? 'Ждёт публикации' : 'Черновик'}</span><span class="muted">${icon('chev', 16)}</span></div>
+          <b>Урок ${numOf(ref)} «${esc(ref.title)}»</b>
+          <div class="row xs muted" style="gap:10px"><span class="row" style="gap:4px">${icon('list', 12)}${ref.steps.length} шагов</span><span class="row" style="gap:4px">${icon('send', 12)}ДЗ: ${ref.hw.tasks.length}</span><span class="row" style="gap:4px">${icon('clock', 12)}${ref.duration} мин</span></div>
+        </a>` : ''}
         <button class="btn dark lg" data-act="newMethod">${icon('plus', 17)}Создать курс</button>
       </div>
     </div>
