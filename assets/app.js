@@ -2,12 +2,12 @@
 // Без сборки: состояние в localStorage, маршрутизация по hash.
 
 (() => {
-  const KEY = 'shidao-methodist-v2';
+  const KEY = 'shidao-methodist-v3';
   const clone = (o) => JSON.parse(JSON.stringify(o));
 
   let S = null;
   try { S = JSON.parse(localStorage.getItem(KEY)); } catch (e) { S = null; }
-  if (!S || !S.methods) S = clone(window.SEED);
+  if (!S || !S.methods || !S.scenarios) S = clone(window.SEED);
 
   let idx = {};
   function reindex() {
@@ -106,7 +106,7 @@
 
   const ui = {
     stepId: null, stepView: 'student', blockId: null, taskId: null, kid: {},
-    duoStep: 0, liveStep: 0, paused: false, trOn: false, revealN: 1, methodsFilter: 'all',
+    duoStep: 0, liveStep: 0, paused: false, trOn: false, revealN: 1, methodsFilter: 'all', mKind: 'all', mAud: 'all', mQ: '',
   };
 
   // ---------------------------------------------------------------- Хелперы модели
@@ -180,8 +180,10 @@
     else if (page === 'lesson') view = vLesson(a, b || 'steps');
     else if (page === 'library') view = vLibrary();
     else if (page === 'media') view = vMedia();
+    else if (page === 'scenarios') view = vScenarios(a);
+    else if (page === 'templates') view = vTemplates();
     else view = notFound();
-    const active = { home: 'home', methods: 'methods', method: 'methods', lesson: 'methods', library: 'library', media: 'media' }[page];
+    const active = { home: 'home', methods: 'methods', method: 'methods', lesson: 'methods', library: 'library', media: 'media', scenarios: 'scenarios', templates: 'templates' }[page];
     app.innerHTML = header(active) + `<main class="page">${view}</main>`;
   }
 
@@ -194,12 +196,14 @@
       <a class="logo" href="#home"><span>Shidao<sup>™</sup></span><span class="role-badge">Кабинет методиста</span></a>
       <nav class="nav">
         ${item('home', '#home', 'Главная', 'home')}
-        ${item('methods', '#methods', 'Методики', 'book')}
-        ${item('library', '#library', 'Библиотека', 'layers')}
-        ${item('media', '#media', 'Медиатека', 'folder')}
+        ${item('methods', '#methods', 'Программы', 'book')}
+        ${item('scenarios', '#scenarios', 'Возрастные сценарии', 'users')}
+        ${item('media', '#media', 'Материалы', 'folder')}
+        ${item('templates', '#templates', 'Шаблоны заданий', 'cards')}
+        ${item('library', '#library', 'Компоненты', 'layers')}
       </nav>
       <div class="header-right">
-        <button class="btn ghost sm" data-act="reset" title="Вернуть демо-данные">${icon('refresh', 14)}<span class="user-name">Сбросить демо</span></button>
+        <button class="btn icon ghost" data-act="reset" title="Сбросить демо-данные">${icon('refresh', 15)}</button>
         <div class="user-name"><b>Елена Ли</b><small>Методист · Shidao</small></div>
         <div class="avatar">ЕЛ</div>
       </div>
@@ -214,44 +218,60 @@
   function vHome() {
     const all = Object.values(S.lessons);
     const ref = all.find((l) => l.reference);
-    const drafts = all.filter((l) => l.status !== 'published').length;
+    const pub = all.filter((l) => l.status === 'published').length;
+    const steps = all.reduce((a, l) => a + l.steps.length, 0);
     const tasks = all.reduce((a, l) => a + l.hw.tasks.length, 0);
+    const nolic = S.media.filter((x) => /Не указана/.test(x.license)).length;
     const recent = [ref, ...all.filter((l) => l !== ref)].filter(Boolean).slice(0, 4);
+    const zones = [
+      ['book', '#c9ff4f66', 'Программы', `${S.methods.length} ${plural(S.methods.length, 'программа', 'программы', 'программ')}`, '#methods'],
+      ['list', '#c9b4ff59', 'Уроки', `${all.length} ${plural(all.length, 'урок', 'урока', 'уроков')} · ${steps} шагов`, ref ? `#lesson/${ref.id}/steps` : '#methods'],
+      ['users', '#70b7ff38', 'Возрастные сценарии', `${S.scenarios.length} ${plural(S.scenarios.length, 'сценарий', 'сценария', 'сценариев')}`, '#scenarios'],
+      ['folder', '#ffb6e859', 'Материалы', `${S.media.length} файлов`, '#media'],
+      ['cards', '#ffe58a80', 'Шаблоны заданий', `${S.templates.length} шаблонов`, '#templates'],
+    ];
+    const stat = (ic, label, n, sub) => `<div class="stat-row"><span class="block-ico" style="background:#14141409">${icon(ic, 15)}</span><div><div class="small" style="font-weight:700">${label}</div>${sub ? `<div class="xs muted">${sub}</div>` : ''}</div><b class="n">${n}</b></div>`;
     return `
-    <div class="hero">
-      <div class="card hero-main">
-        <div class="eyebrow">Кабинет методиста</div>
-        <h1 style="margin:10px 0 12px;max-width:640px">Добрый день, Елена! Соберём программу урок за уроком</h1>
-        <p class="muted" style="max-width:600px;margin:0 0 18px">Методика хранится как эталон: программа → уровни → модули → уроки → шаги. Преподаватели проводят занятия по опубликованной версии, ДЗ выдают из методики.</p>
-        <div class="row wrap">
-          ${ref ? `<a class="btn dark" href="#lesson/${ref.id}/steps">${icon('layers', 15)}Открыть конструктор урока 4 «Цвета»</a>` : ''}
-          <button class="btn" data-act="newMethod">${icon('plus', 15)}Новая методика</button>
-        </div>
-        <div class="grid g4" style="margin-top:22px">
-          <div class="stat"><b>${S.methods.length}</b><span class="small muted">методики</span></div>
-          <div class="stat"><b>${all.length}</b><span class="small muted">уроков</span></div>
-          <div class="stat"><b>${tasks}</b><span class="small muted">заданий ДЗ</span></div>
-          <div class="stat"><b>${drafts}</b><span class="small muted">в работе</span></div>
-        </div>
+    <div class="row between wrap" style="gap:16px;margin-bottom:22px;align-items:flex-end">
+      <div><div class="eyebrow">Кабинет методиста</div><h1 style="margin-top:8px">Добрый день, Елена!</h1>
+        <p class="muted" style="margin:8px 0 0;max-width:640px">Вы управляете программами, уроками, возрастными сценариями, материалами и шаблонами заданий. Преподаватели работают по опубликованной версии.</p></div>
+      <div class="row wrap">
+        ${ref ? `<a class="btn lg" href="#lesson/${ref.id}/steps">${icon('layers', 16)}Урок 4 «Цвета»</a>` : ''}
+        <button class="btn dark lg" data-act="newMethod">${icon('plus', 17)}Новая методика</button>
       </div>
-      <div class="card">
-        <div class="card-h"><h3>Что нужно сделать</h3><span class="chip">4</span></div>
-        <div>
+    </div>
+    <div class="home-grid">
+      <div class="stack" style="--gap:16px">
+        <div class="grid g5">${zones.map(([ic, bg, t, d, h]) => `<a class="card flat zone" href="${h}"><span class="block-ico" style="background:${bg}">${icon(ic, 18)}</span><b>${t}</b><span class="xs muted">${d}</span></a>`).join('')}</div>
+        <div class="card">
+          <div class="card-h"><h3>Что нужно сделать</h3><span class="chip">4</span></div>
           ${todo('flag', '#ffe58a80', 'Урок 4 «Цвета» ждёт публикации', 'Эталонный урок: 16 шагов из компонентов библиотеки', ref ? `#lesson/${ref.id}/steps` : '#methods')}
-          ${todo('send', '#70b7ff38', 'Запрос преподавателя', 'Анна К. просит доп. карточки к уроку 3 «Фрукты»', '#methods')}
+          ${todo('send', '#70b7ff38', 'Запрос преподавателя', 'Анна К. просит доп. карточки к уроку 3 «Фрукты»', '#media')}
           ${todo('book', '#c9b4ff59', 'Черновик программы для 7–10 лет', '2 урока, нужно заполнить шаги и ДЗ', `#method/${S.methods[1] ? S.methods[1].id : ''}`)}
-          ${todo('folder', '#c9ff4f66', 'Перенос медиа из Google Drive', '12 файлов без сведений о лицензии', '#media')}
+          ${todo('folder', '#c9ff4f66', 'Перенос медиа из Google Drive', `${nolic} ${plural(nolic, 'файл', 'файла', 'файлов')} без сведений о лицензии`, '#media')}
+        </div>
+        <div>
+          <div class="row between" style="margin:12px 0 14px"><h2>Недавние уроки</h2><a class="btn sm" href="#methods">Все программы ${icon('chev', 14)}</a></div>
+          <div class="grid g2">${recent.map(lessonCard).join('')}</div>
         </div>
       </div>
-    </div>
-    <div class="card" style="margin-top:16px">
-      <div class="card-h"><h3>Как устроена методика</h3><span class="xs muted">ТЗ п. 4.1</span></div>
-      <div class="row wrap" style="gap:8px">
-        ${['Направление', 'Методика', 'Уровень', 'Модуль', 'Урок', 'Шаг урока', 'Компонент / задание'].map((x, i) => `<span class="chip ${['green', 'purple', 'blue', 'pink', 'yellow', '', 'dark'][i]}" style="padding:7px 12px">${x}</span>${i < 6 ? `<span class="muted">${icon('chev', 14)}</span>` : ''}`).join('')}
-      </div>
-    </div>
-    <div class="row between" style="margin:28px 0 14px"><h2>Недавние уроки</h2><a class="btn sm" href="#methods">Все методики ${icon('chev', 14)}</a></div>
-    <div class="grid g4">${recent.map(lessonCard).join('')}</div>`;
+      <aside class="sticky stack">
+        <div class="card">
+          <div class="card-h"><h3>Статистика</h3><span class="xs muted">на сегодня</span></div>
+          ${stat('book', 'Программы', S.methods.length, `${S.methods.filter((m) => m.status === 'published').length} опубликована`)}
+          ${stat('list', 'Уроки', all.length, `${pub} опубликовано · ${all.length - pub} в работе`)}
+          ${stat('layers', 'Шаги уроков', steps, 'из компонентов библиотеки')}
+          ${stat('send', 'Задания ДЗ', tasks, `${S.templates.length} шаблонов`)}
+          ${stat('folder', 'Материалы', S.media.length, nolic ? `${nolic} без лицензии` : 'лицензии заполнены')}
+          ${stat('users', 'Возрастные сценарии', S.scenarios.length, S.scenarios.map((a) => a.age).join(' · '))}
+          <div style="margin-top:14px"><div class="row between xs" style="margin-bottom:6px"><b>Готовность уроков</b><span class="muted">${Math.round((100 * pub) / Math.max(all.length, 1))}%</span></div><div class="meter"><i style="width:${(100 * pub) / Math.max(all.length, 1)}%"></i></div></div>
+        </div>
+        <div class="card">
+          <div class="card-h"><h3>Как устроена методика</h3><span class="xs muted">ТЗ п. 4.1</span></div>
+          <div class="row wrap" style="gap:6px">${['Направление', 'Методика', 'Уровень', 'Модуль', 'Урок', 'Шаг', 'Компонент / задание'].map((x, i) => `<span class="chip ${['green', 'purple', 'blue', 'pink', 'yellow', '', 'dark'][i]}">${x}</span>${i < 6 ? `<span class="muted">${icon('chev', 12)}</span>` : ''}`).join('')}</div>
+        </div>
+      </aside>
+    </div>`;
   }
   const todo = (ic, bg, t, d, href) => `<a class="todo" href="${href}"><span class="ico" style="background:${bg}">${icon(ic, 16)}</span><span class="grow"><b class="small">${esc(t)}</b><div class="xs muted">${esc(d)}</div></span><span class="muted">${icon('chev', 16)}</span></a>`;
   function lessonCard(L) {
@@ -269,7 +289,7 @@
     const list = S.methods.filter((m) => f === 'all' || (f === 'published' ? m.status === 'published' : m.status !== 'published'));
     return `
     <div class="row between wrap" style="margin-bottom:20px;gap:14px">
-      <div><div class="eyebrow">Направление · Китайский язык</div><h1 style="margin-top:8px">Методики</h1></div>
+      <div><div class="eyebrow">Направление · Китайский язык</div><h1 style="margin-top:8px">Программы и методики</h1></div>
       <div class="row wrap">
         <div class="seg">${[['all', 'Все'], ['published', 'Опубликованы'], ['draft', 'В работе']].map(([k, t]) => `<button class="${f === k ? 'on' : ''}" data-act="filterMethods" data-v="${k}">${t}</button>`).join('')}</div>
         <button class="btn dark" data-act="newMethod">${icon('plus', 15)}Новая методика</button>
@@ -300,7 +320,7 @@
     const tasks = ls.reduce((a, l) => a + l.hw.tasks.length, 0);
     let n = 0;
     return `
-    ${crumbs([['Методики', '#methods'], [m.title]])}
+    ${crumbs([['Программы', '#methods'], [m.title]])}
     <div class="row between wrap" style="gap:16px;align-items:flex-start">
       <div class="grow" style="min-width:280px">
         <div class="row wrap" style="gap:6px;margin-bottom:8px"><span class="chip ${m.accent || 'green'}">${esc(m.segment)}</span><span class="chip">${esc(m.age)}</span>${statusChip(m.status)}<span class="chip">v${esc(m.version)}</span></div>
@@ -338,7 +358,8 @@
           <div class="card-h"><h3>Паспорт методики</h3>${icon('sliders', 16)}</div>
           <div class="stack">
             ${sel(m, 'segment', 'Сегмент', SEGMENTS)}
-            ${sel(m, 'age', 'Возрастной сценарий', AGES)}
+            <label class="field"><span>Возрастной сценарий</span><select class="select" data-id="${m.id}" data-k="scenario" data-rerender="1">${S.scenarios.map((a) => `<option value="${a.id}" ${m.scenario === a.id ? 'selected' : ''}>${esc(a.title)} · ${esc(a.age)}</option>`).join('')}</select></label>
+            <a class="xs" href="#scenarios/${m.scenario || ''}"><u>Открыть настройки сценария</u></a>
             <label class="field"><span>Формат</span><input class="input" data-id="${m.id}" data-k="format" value="${esc(m.format)}"></label>
             <label class="field"><span>Описание</span><textarea class="textarea" data-id="${m.id}" data-k="description">${esc(m.description)}</textarea></label>
             <div class="hint-box">${icon('sparkle', 16)}<span>Возрастной сценарий определяет интерфейс ученика, модель прогресса (мягкая / оценки) и режим ИИ.</span></div>
@@ -382,7 +403,7 @@
     const tabs = [['passport', 'Паспорт урока', 'sliders'], ['steps', 'Шаги урока', 'list', L.steps.length], ['hw', 'Домашнее задание', 'send', L.hw.tasks.length], ['parent', 'Для родителя', 'heart'], ['show', 'Двухэкранный режим', 'monitor']];
     const body = { passport: tPassport, steps: tSteps, hw: tHomework, parent: tParent, show: tShow }[tab] || tSteps;
     return `
-    ${crumbs([['Методики', '#methods'], m ? [m.title, `#method/${m.id}`] : ['—'], [`Урок ${n}`]])}
+    ${crumbs([['Программы', '#methods'], m ? [m.title, `#method/${m.id}`] : ['—'], [`Урок ${n}`]])}
     <div class="lesson-head">
       <div class="row" style="gap:16px;align-items:flex-start;min-width:0;flex:1">
         <span class="num-big">${n}</span>
@@ -634,7 +655,7 @@
     return `<div class="card stack">
       <div class="row" style="gap:10px"><span class="block-ico" style="background:#c9b4ff59;width:38px;height:38px">${icon(meta.icon, 18)}</span><div class="grow"><div class="xs muted">Задание ${i + 1} · ${meta.label}</div><input class="input bare" style="font-weight:900;font-size:20px" data-id="${t.id}" data-k="title" data-live="hwlist,kid" value="${esc(t.title)}"></div>
         <span class="check-badge check-${meta.check}">${CHECK[meta.check]}</span>
-        <button class="btn icon ghost" data-act="dupTask" data-id="${t.id}" title="Дублировать">${icon('copy', 15)}</button><button class="btn icon ghost danger" data-act="del" data-id="${t.id}" title="Удалить">${icon('trash', 15)}</button></div>
+        ${ui.lid === '__tpl' ? `<button class="btn sm" data-act="useTplModal" data-id="${t.id}">${icon('plus', 13)}В урок</button>` : `<button class="btn sm ghost" data-act="saveTpl" data-id="${t.id}" title="Сохранить как шаблон">${icon('cards', 13)}В шаблоны</button>`}<button class="btn icon ghost" data-act="dupTask" data-id="${t.id}" title="Дублировать">${icon('copy', 15)}</button><button class="btn icon ghost danger" data-act="del" data-id="${t.id}" title="Удалить">${icon('trash', 15)}</button></div>
       <label class="field"><span>Инструкция для ученика</span><textarea class="textarea" style="min-height:60px" data-id="${t.id}" data-k="instruction" data-live="kid">${esc(t.instruction)}</textarea></label>
       ${taskFields(L, t)}
       <div class="grid" style="grid-template-columns:120px 1fr">
@@ -820,24 +841,166 @@
     const usage = (type) => all.reduce((a, l) => a + l.steps.reduce((x, s) => x + s.blocks.filter((b) => b.type === type).length, 0), 0);
     const tusage = (type) => all.reduce((a, l) => a + l.hw.tasks.filter((t) => t.type === type).length, 0);
     const group = (check, title) => `<div class="card"><div class="card-h"><h3>${title}</h3><span class="check-badge check-${check === 'ai' ? 'hybrid' : check}">${CHECK[check]}</span></div><div class="stack-s">${Object.entries(TT).filter(([, v]) => v.check === check).map(([k, v]) => `<div class="row" style="gap:10px"><span class="block-ico" style="background:#14141409">${icon(v.icon, 14)}</span><div class="grow"><b class="small">${v.label}</b><div class="xs muted">${v.desc}</div></div><span class="xs muted">${tusage(k)}</span></div>`).join('')}</div></div>`;
-    return `<div style="margin-bottom:20px"><div class="eyebrow">Без участия разработчика</div><h1 style="margin-top:8px">Библиотека</h1><p class="muted" style="max-width:640px">Уроки собираются только из переиспользуемых компонентов. Каждый работает в трёх контекстах: проведение урока, самостоятельное повторение, домашнее задание.</p></div>
+    return `<div style="margin-bottom:20px"><div class="eyebrow">Без участия разработчика</div><h1 style="margin-top:8px">Библиотека компонентов</h1><p class="muted" style="max-width:640px">Уроки собираются только из переиспользуемых компонентов. Каждый работает в трёх контекстах: проведение урока, самостоятельное повторение, домашнее задание.</p></div>
       <h2 style="margin-bottom:14px">Компоненты урока</h2>
       <div class="grid g4">${Object.entries(COMP).map(([k, c]) => `<div class="card flat"><span class="block-ico" style="background:${c.color};width:42px;height:42px">${icon(c.icon, 20)}</span><h3 style="margin-top:12px">${c.label}</h3><p class="small muted" style="margin:6px 0 12px">${c.desc}</p><div class="row between"><span class="xs muted">в ${usage(k)} шагах</span><span class="row" style="gap:4px">${Object.values(CTX).map((t) => `<span class="chip" style="font-size:10.5px;padding:2px 7px">${t}</span>`).join('')}</span></div></div>`).join('')}
         <div class="card new-card" style="min-height:0" data-act="toast" data-msg="Новые компоненты подключаются без изменения ранее созданных уроков"><div><h3>+ Новый компонент</h3><p class="xs muted">Расширение библиотеки</p></div></div></div>
       <h2 style="margin:32px 0 14px">Типы заданий ДЗ</h2>
-      <div class="grid g3" style="align-items:start">${group('auto', 'Автопроверка')}${group('manual', 'Ручная проверка')}<div class="stack">${group('hybrid', 'Гибридная проверка')}${group('ai', 'ИИ-задания')}</div></div>
-      <h2 style="margin:32px 0 14px">Шаблоны обратной связи</h2>
-      <div class="grid g4">${(S.feedback || (S.feedback = [{ id: uid('fb'), t: 'Молодец!', x: 'Отличная работа! Ты правильно назвал все цвета. 太棒了！' }, { id: uid('fb'), t: 'Почти получилось', x: 'Хорошая попытка! Давай ещё раз послушаем, как звучит третий тон.' }, { id: uid('fb'), t: 'На доработку', x: 'Посмотри ещё раз на задание 2 и попробуй снова. Я верю, у тебя получится!' }, { id: uid('fb'), t: 'Родителю', x: 'Сегодня ребёнок уверенно использовал новые слова. Повторите дома песню урока.' }])).map((f) => `<div class="card flat stack-s"><input class="input bare" style="font-weight:800" data-id="${f.id}" data-k="t" value="${esc(f.t)}"><textarea class="textarea" style="min-height:90px" data-id="${f.id}" data-k="x">${esc(f.x)}</textarea></div>`).join('')}</div>`;
+      <div class="grid g3" style="align-items:start">${group('auto', 'Автопроверка')}${group('manual', 'Ручная проверка')}<div class="stack">${group('hybrid', 'Гибридная проверка')}${group('ai', 'ИИ-задания')}</div></div>`;
   }
 
-  // ---------------------------------------------------------------- Медиатека
+  // ---------------------------------------------------------------- Материалы
+  const MKIND = { video: ['Видео', 'film'], song: ['Песня', 'music'], audio: ['Аудио', 'headphones'], image: ['Изображение', 'image'], pdf: ['PDF / печать', 'printer'], pres: ['Презентация', 'monitor'], cards: ['Карточки', 'cards'] };
+  function mediaListInner() {
+    const q = (ui.mQ || '').toLowerCase();
+    const list = S.media.filter((x) => (ui.mKind === 'all' || x.kind === ui.mKind) && (ui.mAud === 'all' || (x.audience || []).includes(ui.mAud)) && (!q || `${x.title} ${x.lesson}`.toLowerCase().includes(q)));
+    if (!list.length) return '<div class="empty">Ничего не найдено</div>';
+    return `<div class="grid g4">${list.map((x) => {
+      const k = MKIND[x.kind] || MKIND.pdf;
+      const nolic = /Не указана/.test(x.license);
+      return `<div class="card flat" style="padding:14px">
+        <div class="media-thumb thumb-${x.kind}">${icon(k[1], 30)}<span class="chip" style="background:#ffffffcc">${k[0]}</span>${x.offline ? `<span class="chip green" title="Доступен офлайн">${icon('check', 11)}офлайн</span>` : ''}</div>
+        <b class="small" style="display:block;margin-top:10px">${esc(x.title)}</b>
+        <div class="xs muted">${esc(x.lesson)} · ${esc(x.size)} · ${esc(x.source)}</div>
+        <div class="row wrap" style="gap:4px;margin-top:8px">${(x.audience || []).map((a) => `<span class="chip" style="font-size:11px">${a}</span>`).join('')}</div>
+        <div class="row between" style="margin-top:10px;gap:6px"><span class="chip ${nolic ? 'pink' : /до/.test(x.license) ? 'yellow' : 'green'}" style="font-size:11px;white-space:normal">${nolic ? 'Лицензия не указана' : esc(x.license)}</span><span class="row" style="gap:2px"><button class="btn icon ghost" data-act="editMedia" data-id="${x.id}" title="Изменить">${icon('pen', 14)}</button><button class="btn icon ghost danger" data-act="confirmDel" data-id="${x.id}" data-what="материал" title="Удалить">${icon('trash', 14)}</button></span></div>
+      </div>`;
+    }).join('')}</div>`;
+  }
   function vMedia() {
-    const ic = { video: 'film', song: 'music', audio: 'headphones', image: 'image', pdf: 'file' };
-    return `<div class="row between wrap" style="margin-bottom:20px;gap:12px"><div><div class="eyebrow">Хранилище платформы · CDN</div><h1 style="margin-top:8px">Медиатека</h1></div><button class="btn dark" data-act="fakeUpload" data-what="файлы">${icon('upload', 15)}Загрузить файлы</button></div>
-      <div class="card" style="padding:8px 8px 4px;overflow-x:auto"><table class="table"><thead><tr><th>Файл</th><th>Используется</th><th>Размер</th><th>Источник</th><th>Лицензия</th></tr></thead><tbody>
-        ${S.media.map((x) => `<tr><td><div class="row"><span class="block-ico" style="background:#14141409">${icon(ic[x.kind] || 'file', 15)}</span><b class="small">${esc(x.title)}</b></div></td><td class="small">${esc(x.lesson)}</td><td class="small muted">${esc(x.size)}</td><td class="small">${esc(x.source)}</td><td><span class="chip ${/до/.test(x.license) ? 'yellow' : 'green'}">${esc(x.license)}</span></td></tr>`).join('')}
-      </tbody></table></div>
-      <div class="hint-box" style="margin-top:14px">${icon('sparkle', 16)}<span>Для каждого медиафайла хранятся источник и лицензия. Файлы переносятся из Google Drive в хранилище платформы и доступны для офлайн-загрузки урока.</span></div>`;
+    const nolic = S.media.filter((x) => /Не указана/.test(x.license)).length;
+    const segBtn = (f, v, t) => `<button class="${ui[f] === v ? 'on' : ''}" data-act="mediaFilter" data-f="${f}" data-v="${v}">${t}</button>`;
+    return `<div class="row between wrap" style="margin-bottom:18px;gap:12px;align-items:flex-end"><div><div class="eyebrow">Хранилище платформы · CDN</div><h1 style="margin-top:8px">Материалы</h1><p class="muted" style="margin:8px 0 0;max-width:640px">Аудио, видео, изображения, PDF, презентации и карточки для преподавателя, ученика и родителя. Для каждого файла хранятся источник и лицензия.</p></div><button class="btn dark lg" data-act="editMedia">${icon('upload', 16)}Загрузить материал</button></div>
+      <div class="grid g4" style="margin-bottom:16px">
+        <div class="stat" style="background:#ffffffb3"><b>${S.media.length}</b><span class="xs muted">файлов в хранилище</span></div>
+        <div class="stat" style="background:#ffffffb3"><b>${S.media.filter((x) => x.offline).length}</b><span class="xs muted">доступны офлайн</span></div>
+        <div class="stat" style="background:#ffffffb3"><b>${S.media.filter((x) => (x.audience || []).includes('родитель')).length}</b><span class="xs muted">для родителей</span></div>
+        <div class="stat" style="background:${nolic ? '#ffb6e840' : '#ffffffb3'}"><b>${nolic}</b><span class="xs muted">без лицензии</span></div>
+      </div>
+      <div class="card" style="padding:12px;margin-bottom:16px"><div class="row wrap" style="gap:10px">
+        <input class="input" id="mq" placeholder="Поиск по названию или уроку" style="max-width:260px" value="${esc(ui.mQ)}">
+        <div class="seg">${segBtn('mKind', 'all', 'Все')}${Object.entries(MKIND).map(([k, v]) => segBtn('mKind', k, v[0])).join('')}</div>
+        <div class="seg">${segBtn('mAud', 'all', 'Для всех')}${segBtn('mAud', 'преподаватель', 'Преподавателю')}${segBtn('mAud', 'ученик', 'Ученику')}${segBtn('mAud', 'родитель', 'Родителю')}</div>
+      </div></div>
+      <div data-region="mlist">${mediaListInner()}</div>`;
+  }
+
+  // ---------------------------------------------------------------- Возрастные сценарии
+  const MODS = {
+    twoScreen: ['Двухэкранный режим', 'Планшет преподавателя + проектор'], offline: ['Офлайн-режим', 'Урок загружается заранее'],
+    parent: ['Кабинет и задания родителя', 'Повторение дома вместе'], gamification: ['Геймификация', 'XP, серии, достижения, значки'],
+    pron: ['Модуль произношения', 'Запись голоса, оценка тонов'], hanzi: ['Тренажёр иероглифов', 'Порядок черт, обводка'],
+    srs: ['Словарь и SRS', 'Интервальное повторение'], dialog: ['Диалоговый тренажёр', 'Реплики в моделируемом диалоге'],
+    analytics: ['Расширенная аналитика', 'Прогресс по навыкам и темам'], hsk: ['Подготовка к HSK', 'Задания по разделам экзамена'],
+    plan: ['Персональный учебный план', 'Индивидуальная траектория'],
+  };
+  const UIMODE = { game: ['Игровой', 'Крупные элементы, минимум текста, аудио и картинки'], school: ['Школьный', 'Уроки, задания, тесты, расписание, прогресс'], teen: ['Продвинутый', 'Аналитика, HSK, словарь, диалоги, личный план'] };
+  const AIMODE = { safe: ['Child Safety Mode', 'Только разрешённые учебные сценарии, без свободного чата, без запроса личных данных и внешних ссылок'], helper: ['Учебный помощник', 'Объяснить слово или задание, повторение, мини-викторины'], extended: ['Расширенный', 'Тематические диалоги, разбор ошибок, персональный план'] };
+  const READING = { none: 'Без самостоятельного чтения', pinyin: 'Иероглифы + пиньинь', full: 'Иероглифы, пиньинь по запросу' };
+
+  function vScenarios(sid) {
+    const list = S.scenarios;
+    const a = list.find((x) => x.id === sid) || list[0];
+    if (!a) return '<div class="card"><div class="empty">Нет сценариев</div></div>';
+    ui.scId = a.id;
+    const used = S.methods.filter((m) => m.scenario === a.id);
+    const seg = (k, map) => `<div class="seg">${Object.entries(map).map(([v, t]) => `<button class="${a[k] === v ? 'on' : ''}" data-act="setField" data-id="${a.id}" data-k="${k}" data-v="${v}">${Array.isArray(t) ? t[0] : t}</button>`).join('')}</div>`;
+    return `<div class="row between wrap" style="margin-bottom:18px;gap:12px;align-items:flex-end"><div><div class="eyebrow">ТЗ п. 2.5 · задаётся на уровне программы и группы</div><h1 style="margin-top:8px">Возрастные сценарии</h1><p class="muted" style="margin:8px 0 0;max-width:660px">Сценарий определяет интерфейс ученика, набор модулей, форму прогресса, допустимые типы заданий и режим ИИ.</p></div><button class="btn dark lg" data-act="newScenario">${icon('plus', 16)}Новый сценарий</button></div>
+      <div class="grid g3" style="margin-bottom:18px">${list.map((x) => `<a class="card flat zone ${x.id === a.id ? 'sel-card' : ''}" href="#scenarios/${x.id}"><div class="row between"><span class="chip ${x.accent}">${esc(x.age)}</span><span class="xs muted">${S.methods.filter((m) => m.scenario === x.id).length} прогр.</span></div><b style="font-size:17px">${esc(x.title)}</b><span class="xs muted">${esc(x.segment)} · ${UIMODE[x.ui][0].toLowerCase()} интерфейс · ${x.progress === 'soft' ? 'мягкий прогресс' : 'оценки'}</span></a>`).join('')}</div>
+      <div class="scen-grid">
+        <div class="stack">
+          <div class="card stack">
+            <div class="row" style="gap:10px"><input class="input bare title grow" data-id="${a.id}" data-k="title" value="${esc(a.title)}">${used.length ? '' : `<button class="btn icon ghost danger" data-act="confirmDel" data-id="${a.id}" data-what="сценарий">${icon('trash', 15)}</button>`}</div>
+            <div class="grid g2">
+              <label class="field"><span>Возраст</span><input class="input" data-id="${a.id}" data-k="age" value="${esc(a.age)}"></label>
+              ${sel(a, 'segment', 'Сегмент', SEGMENTS)}
+            </div>
+            <div class="field"><span>Интерфейс ученика</span>${seg('ui', UIMODE)}<div class="xs muted" style="margin-top:6px">${UIMODE[a.ui][1]}</div></div>
+            <div class="grid g2">
+              <label class="field"><span>Чтение</span><select class="select" data-id="${a.id}" data-k="reading" data-rerender="1">${Object.entries(READING).map(([k, t]) => `<option value="${k}" ${a.reading === k ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
+              <div class="field"><span>Размер иероглифов</span>${seg('font', { M: 'M', L: 'L', XL: 'XL' })}</div>
+            </div>
+          </div>
+          <div class="card stack">
+            <div class="card-h" style="margin:0"><h3>Прогресс</h3>${seg('progress', { soft: 'Мягкая модель', grades: 'Оценки учителя' })}</div>
+            ${a.progress === 'soft' ? `<div class="grid g2">${a.softLabels.map((t, i) => `<input class="input" data-sl="${a.id}" data-i="${i}" value="${esc(t)}">`).join('')}</div><div class="xs muted">Для младших детей прогресс показывается не оценками, а мягкими статусами.</div>` : '<div class="xs muted">Ученик и родитель видят реальные оценки преподавателя по заданиям и урокам.</div>'}
+          </div>
+          <div class="card">
+            <div class="card-h"><h3>Модули платформы</h3><span class="xs muted">${Object.values(a.modules).filter(Boolean).length} из ${Object.keys(MODS).length}</span></div>
+            <div class="grid g2" style="gap:8px">${Object.entries(MODS).map(([k, [t, d]]) => `<label class="mod-row"><span class="switch"><input type="checkbox" data-modk="${a.id}" data-m="${k}" ${a.modules[k] ? 'checked' : ''}><i></i></span><span><b class="small">${t}</b><span class="xs muted" style="display:block">${d}</span></span></label>`).join('')}</div>
+          </div>
+          <div class="card stack">
+            <div class="card-h" style="margin:0"><h3>Домашние задания</h3><label class="row small" style="gap:8px">не дольше<input class="input" type="number" min="1" style="width:70px" data-type="num" data-id="${a.id}" data-k="hwMax" value="${a.hwMax}">мин</label></div>
+            <div class="field"><span>Допустимые типы заданий <span class="muted" style="font-weight:500">— остальные в конструкторе ДЗ помечаются «вне сценария»</span></span>
+              <div class="props">${Object.entries(TT).filter(([, v]) => !v.stage2).map(([k, v]) => `<span class="prop ${a.tasks.includes(k) ? 'on' : ''}" data-act="toggleScTask" data-id="${a.id}" data-k="${k}">${v.label}</span>`).join('')}</div></div>
+          </div>
+          <div class="card stack">
+            <div class="card-h" style="margin:0"><h3>Режим ИИ-ассистента</h3><span class="chip purple">Этап 2</span></div>
+            ${seg('ai', AIMODE)}
+            <div class="hint-box">${icon('sparkle', 16)}<span>${AIMODE[a.ai][1]}</span></div>
+          </div>
+        </div>
+        <aside class="sticky">
+          <div class="eyebrow" style="margin-bottom:10px">Кабинет ученика · предпросмотр</div>
+          <div data-region="scprev">${scenarioPreview(a)}</div>
+          <div class="card" style="margin-top:14px;padding:16px"><h3 style="margin-bottom:8px">Используется в программах</h3>${used.length ? used.map((m) => `<a class="todo" href="#method/${m.id}"><span class="grow small"><b>${esc(m.title)}</b></span>${statusChip(m.status)}</a>`).join('') : '<div class="empty">Пока не назначен программам</div>'}</div>
+        </aside>
+      </div>`;
+  }
+
+  function scenarioPreview(a) {
+    if (!a) return '';
+    const on = (k) => a.modules[k];
+    const hz = { M: 20, L: 28, XL: 38 }[a.font] || 28;
+    const tile = (ic, t, sub) => `<div class="s-block" style="padding:10px"><div class="row" style="gap:8px">${icon(ic, 18)}<b class="xs">${t}</b></div>${sub ? `<div class="xs muted" style="margin-top:4px">${sub}</div>` : ''}</div>`;
+    const progress = a.progress === 'soft'
+      ? `<div class="s-block"><div class="s-title">Как у меня получается</div><div class="row wrap" style="gap:4px">${a.softLabels.map((t, i) => `<span class="chip ${i === 1 ? 'green' : ''}" style="font-size:10.5px">${esc(t)}</span>`).join('')}</div></div>`
+      : `<div class="s-block"><div class="s-title">Оценки</div><div class="row" style="gap:6px">${['5', '5', '4', '5'].map((x) => `<span class="chip" style="background:#eef5ff">${x}</span>`).join('')}</div></div>`;
+    let body = '';
+    if (a.ui === 'game') {
+      body = `<div class="s-scene" style="min-height:110px;justify-content:space-between;align-items:center"><span class="hero-char long zh" style="width:54px;height:54px;font-size:24px">龙</span><div class="bubble zh" style="font-size:${hz * 0.6}px">你好！</div><span class="hero-char mei zh" style="width:54px;height:54px;font-size:24px">妹</span></div>
+        <button class="kid-btn lime" style="font-size:18px;padding:16px">${icon('play', 16)} Урок 4</button>
+        <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:8px">${[['music', 'Песни'], ['film', 'Мультики'], ['game', 'Игры']].map(([i, t]) => `<div class="s-block" style="text-align:center;padding:12px 4px">${icon(i, 26)}<div class="xs" style="font-weight:800;margin-top:4px">${t}</div></div>`).join('')}</div>
+        ${on('parent') ? tile('heart', 'Задание с мамой или папой') : ''}
+        ${on('gamification') ? `<div class="row" style="justify-content:center;gap:4px;font-size:22px">⭐⭐⭐<span style="opacity:.25">⭐⭐</span></div>` : ''}${progress}`;
+    } else if (a.ui === 'school') {
+      body = `<div><b>Привет, Миша!</b><div class="xs muted">Сегодня урок в 16:00</div></div>
+        <div class="s-block" style="background:#141414;color:#fff"><div class="xs" style="opacity:.7">Следующий урок</div><b>Приветствие и знакомство</b><div class="zh" style="font-size:${hz}px;font-weight:900">你好</div></div>
+        ${tile('send', 'Домашнее задание', '2 задания · до пятницы')}
+        <div class="grid g2" style="gap:8px">${on('hanzi') ? tile('pen', 'Иероглифы') : ''}${on('pron') ? tile('mic', 'Произношение') : ''}${on('srs') ? tile('cards', 'Карточки') : ''}${on('dialog') ? tile('users', 'Диалоги') : ''}</div>
+        ${on('gamification') ? `<div class="s-block"><div class="row between xs"><b>Уровень 3 · 240 XP</b><span>🔥 5 дней</span></div><div class="meter" style="margin-top:6px"><i style="width:60%;background:#c9ff4f"></i></div></div>` : ''}${progress}`;
+    } else {
+      body = `<div><b>Привет, Аня!</b><div class="xs muted">План на неделю: 4 из 6 целей</div></div>
+        ${on('hsk') ? `<div class="s-block"><div class="s-title">Готовность к HSK 2</div>${[['Аудирование', 72], ['Чтение', 58], ['Лексика', 81]].map(([t, v]) => `<div class="xs" style="margin-top:6px">${t} · ${v}%</div><div class="meter"><i style="width:${v}%"></i></div>`).join('')}</div>` : ''}
+        <div class="grid g2" style="gap:8px">${on('srs') ? tile('cards', 'Словарь', '214 слов · 30 на сегодня') : ''}${on('dialog') ? tile('users', 'Диалоги', 'В кафе · 6 реплик') : ''}${on('pron') ? tile('mic', 'Произношение', 'тоны 86%') : ''}${on('plan') ? tile('flag', 'Мой план', '3 темы') : ''}</div>
+        ${on('analytics') ? tile('layers', 'Аналитика', 'Сложнее всего: 3-й тон, 把') : ''}${progress}`;
+    }
+    return `<div class="screen-frame" style="max-width:340px;margin:0 auto;border-radius:30px;padding:10px"><div class="screen phone">
+      <div class="screen-head"><span>${esc(a.title)} · ${esc(a.age)}</span><span>${UIMODE[a.ui][0]}</span></div>
+      <div class="screen-body" style="font-size:${a.font === 'XL' ? 15 : 13}px">${body}
+        <div class="row" style="gap:6px;margin-top:auto"><span class="block-ico" style="background:#c9b4ff59;width:26px;height:26px">${icon('bot', 13)}</span><span class="xs muted">ИИ: ${AIMODE[a.ai][0]}</span></div>
+      </div></div></div>`;
+  }
+
+  // ---------------------------------------------------------------- Шаблоны заданий
+  function tplLesson() {
+    const vocab = [];
+    Object.values(S.lessons).forEach((l) => l.vocab.forEach((w) => { if (!vocab.some((x) => x.zh === w.zh)) vocab.push(w); }));
+    return { id: '__tpl', hw: { id: '__tplhw', tasks: S.templates, check: 'auto', estimate: 0, dueDays: 0 }, vocab, assessment: 'soft', steps: [], parent: { note: '' } };
+  }
+  function vTemplates() {
+    ui.lid = '__tpl';
+    if (!S.templates.some((t) => t.id === ui.taskId)) ui.taskId = S.templates[0] ? S.templates[0].id : null;
+    const L = tplLesson();
+    const t = idx[ui.taskId];
+    return `<div class="row between wrap" style="margin-bottom:18px;gap:12px;align-items:flex-end"><div><div class="eyebrow">Переиспользуемые задания</div><h1 style="margin-top:8px">Шаблоны заданий</h1><p class="muted" style="margin:8px 0 0;max-width:660px">Шаблон создаётся один раз и вставляется в ДЗ любого урока. Задание из урока можно сохранить в шаблоны кнопкой «В шаблоны».</p></div><button class="btn dark lg" data-act="addTaskModal">${icon('plus', 16)}Новый шаблон</button></div>
+      <div class="builder hw">
+        <div class="card sticky" style="padding:16px"><div class="row between" style="margin-bottom:6px"><h3>Шаблоны</h3><span class="xs muted">${S.templates.length} · вставлены ${S.templates.reduce((a, x) => a + (x.uses || 0), 0)} раз</span></div><div data-region="hwlist">${hwListInner(L)}</div></div>
+        <div>${t ? taskEditor(L, t) : '<div class="card"><div class="empty">Создайте первый шаблон</div></div>'}</div>
+        <div class="preview-col sticky"><div class="row between" style="margin-bottom:10px"><span class="eyebrow">Как увидит ученик</span><button class="btn xs" data-act="kidReset">${icon('refresh', 12)}Сбросить ответы</button></div><div data-region="kid">${t ? kidInner(L) : ''}</div></div>
+      </div>
+      <div class="row between" style="margin:32px 0 14px"><h2>Шаблоны обратной связи</h2><button class="btn sm" data-act="addFeedback">${icon('plus', 14)}Шаблон</button></div>
+      <div class="grid g4">${S.feedback.map((f) => `<div class="card flat stack-s"><div class="row"><input class="input bare grow" style="font-weight:800" data-id="${f.id}" data-k="t" value="${esc(f.t)}"><button class="btn icon ghost danger" data-act="del" data-id="${f.id}">${icon('trash', 13)}</button></div><textarea class="textarea" style="min-height:90px" data-id="${f.id}" data-k="x">${esc(f.x)}</textarea></div>`).join('')}</div>`;
   }
 
   // ---------------------------------------------------------------- Модальные окна и тосты
@@ -854,7 +1017,7 @@
     toastT = setTimeout(() => el.remove(), 2600);
   }
 
-  const curLesson = () => S.lessons[ui.lid];
+  const curLesson = () => (ui.lid === '__tpl' ? tplLesson() : S.lessons[ui.lid]);
   const curStep = () => idx[ui.stepId];
   function refresh(names) { names.forEach((r) => document.querySelectorAll(`[data-region="${r}"]`).forEach((n) => { n.innerHTML = REG[r](); })); }
   const REG = {
@@ -862,6 +1025,8 @@
     student: () => previewInner(curLesson()),
     hwlist: () => hwListInner(curLesson()),
     kid: () => kidInner(curLesson()),
+    scprev: () => scenarioPreview(idx[ui.scId]),
+    mlist: () => mediaListInner(),
   };
 
   // ---------------------------------------------------------------- Действия
@@ -876,7 +1041,7 @@
       modal(`${mh('Новая методика', 'Стандартизированный шаблон методики Shidao')}
         <div class="stack">
           <label class="field"><span>Название</span><input class="input" id="nmTitle" placeholder="Например: Китайский для дошкольников, 2-й год"></label>
-          <div class="grid g2"><label class="field"><span>Сегмент</span><select class="select" id="nmSeg">${SEGMENTS.map((x) => `<option>${x}</option>`).join('')}</select></label><label class="field"><span>Возрастной сценарий</span><select class="select" id="nmAge">${AGES.map((x) => `<option ${x === '5–6 лет' ? 'selected' : ''}>${x}</option>`).join('')}</select></label></div>
+          <div class="grid g2"><label class="field"><span>Сегмент</span><select class="select" id="nmSeg">${SEGMENTS.map((x) => `<option>${x}</option>`).join('')}</select></label><label class="field"><span>Возрастной сценарий</span><select class="select" id="nmAge">${S.scenarios.map((a) => `<option value="${a.id}">${esc(a.title)} · ${esc(a.age)}</option>`).join('')}</select></label></div>
           <label class="field"><span>Формат</span><input class="input" id="nmFormat" value="Группа 4–8 детей, 45 мин"></label>
           <label class="field"><span>Структура</span><select class="select" id="nmTpl"><option value="1">1 уровень · 1 модуль (пустая)</option><option value="3">3 уровня · по 2 модуля</option></select></label>
         </div>
@@ -886,7 +1051,7 @@
     createMethod() {
       const v = (id) => document.getElementById(id).value.trim();
       const levels = +v('nmTpl') === 3 ? [1, 2, 3].map((i) => ({ id: uid('v'), title: `Уровень ${i}`, modules: [1, 2].map((j) => ({ id: uid('d'), title: `Модуль ${(i - 1) * 2 + j}`, lessons: [] })) })) : [{ id: uid('v'), title: 'Уровень 1', modules: [{ id: uid('d'), title: 'Модуль 1', lessons: [] }] }];
-      const m = { id: uid('m'), title: v('nmTitle') || 'Новая методика', direction: 'Китайский язык', segment: v('nmSeg'), age: v('nmAge'), format: v('nmFormat'), description: '', status: 'draft', version: '0.1', updated: 'сегодня', accent: ['pink', 'blue', 'purple', 'green'][S.methods.length % 4], assigned: [], history: [{ v: '0.1', date: '03 ноя 2026', who: 'Е. Ли', note: 'Создана методика', status: 'draft' }], levels };
+      const m = { id: uid('m'), title: v('nmTitle') || 'Новая методика', direction: 'Китайский язык', segment: v('nmSeg'), age: idx[v('nmAge')] ? idx[v('nmAge')].age : '', scenario: v('nmAge'), format: v('nmFormat'), description: '', status: 'draft', version: '0.1', updated: 'сегодня', accent: ['pink', 'blue', 'purple', 'green'][S.methods.length % 4], assigned: [], history: [{ v: '0.1', date: '03 ноя 2026', who: 'Е. Ли', note: 'Создана методика', status: 'draft' }], levels };
       S.methods.push(m); reindex(); save(); closeModal(); go(`#method/${m.id}`); toast('Методика создана');
     },
     addLevel(d) { const m = idx[d.id]; m.levels.push({ id: uid('v'), title: `Уровень ${m.levels.length + 1}`, modules: [{ id: uid('d'), title: 'Новый модуль', lessons: [] }] }); reindex(); save(); render(); },
@@ -1031,8 +1196,12 @@
     // --- ДЗ
     selTask(d) { if (!d.id) return; ui.taskId = d.id; render(); },
     addTaskModal() {
-      const grp = (check, title) => `<div class="eyebrow" style="margin:14px 0 8px">${title}</div><div class="palette">${Object.entries(TT).filter(([, v]) => v.check === check).map(([k, v]) => `<button class="pal-item ${v.stage2 ? 'disabled' : ''}" ${v.stage2 ? '' : `data-act="addTask" data-type="${k}"`}><span class="block-ico" style="background:#14141409">${icon(v.icon, 15)}</span><b>${v.label}</b><small>${v.desc}</small></button>`).join('')}</div>`;
-      modal(`${mh('Добавить задание', 'Задание создаётся в методике. Преподаватель назначит его группе или ученику.')}${grp('auto', 'Автопроверка')}${grp('hybrid', 'Авто + преподаватель')}${grp('manual', 'Проверяет преподаватель')}${grp('ai', 'Этап 2')}`, true);
+      const inTpl = ui.lid === '__tpl';
+      const m = inTpl ? null : methodOf(ui.lid);
+      const sc = m && S.scenarios.find((x) => x.id === m.scenario);
+      const grp = (check, title) => `<div class="eyebrow" style="margin:16px 0 8px">${title}</div><div class="palette">${Object.entries(TT).filter(([, v]) => v.check === check).map(([k, v]) => `<button class="pal-item ${v.stage2 ? 'disabled' : ''}" ${v.stage2 ? '' : `data-act="addTask" data-type="${k}"`}><span class="block-ico" style="background:#14141409">${icon(v.icon, 15)}</span><b>${v.label}</b><small>${v.desc}</small>${sc && !v.stage2 && !sc.tasks.includes(k) ? `<span class="chip yellow" style="font-size:10.5px;align-self:flex-start">вне сценария</span>` : ''}</button>`).join('')}</div>`;
+      const tpls = inTpl ? '' : `<div class="eyebrow" style="margin:4px 0 8px">Из шаблонов заданий</div><div class="palette">${S.templates.map((t) => `<button class="pal-item" data-act="insertTpl" data-t="${t.id}" data-l="${ui.lid}"><span class="block-ico" style="background:#c9ff4f66">${icon(TT[t.type].icon, 15)}</span><b>${esc(t.title)}</b><small>${TT[t.type].label}</small></button>`).join('')}</div>`;
+      modal(`${mh(inTpl ? 'Новый шаблон задания' : 'Добавить задание', inTpl ? 'Выберите тип задания' : sc ? `Возрастной сценарий программы: ${esc(sc.title)} · ${esc(sc.age)}` : '')}${tpls}${grp('auto', 'Автопроверка')}${grp('hybrid', 'Авто + преподаватель')}${grp('manual', 'Проверяет преподаватель')}${grp('ai', 'Этап 2')}`, true);
     },
     addTask(d) { const t = newTask(d.type); curLesson().hw.tasks.push(t); ui.taskId = t.id; reindex(); save(); closeModal(); render(); toast(`Добавлено: ${TT[d.type].label}`); },
     dupTask(d) { const L = curLesson(); const t = idx[d.id]; const c = renew(clone(t)); c.title = `${t.title} (копия)`; L.hw.tasks.splice(L.hw.tasks.indexOf(t) + 1, 0, c); ui.taskId = c.id; reindex(); save(); render(); },
@@ -1066,6 +1235,46 @@
     kidMic(d) { const st = ui.kid[d.t]; if (st.rec) { st.rec = false; st.ok = true; } else st.rec = true; refresh(['kid']); },
     kidDone(d) { ui.kid[d.t].ok = true; refresh(['kid']); },
 
+    // --- шаблоны
+    insertTpl(d) {
+      const src = idx[d.t]; const L = S.lessons[d.l]; const c = renew(clone(src)); delete c.uses;
+      L.hw.tasks.push(c); src.uses = (src.uses || 0) + 1; if (ui.lid === d.l) ui.taskId = c.id;
+      reindex(); save(); closeModal(); render(); toast(`Шаблон добавлен в ДЗ урока ${numOf(L)} «${L.title}»`);
+    },
+    useTplModal(d) {
+      modal(`${mh('Добавить шаблон в урок', esc(idx[d.id].title))}${S.methods.map((m) => { const ls = methodLessons(m); return ls.length ? `<div class="eyebrow" style="margin:14px 0 8px">${esc(m.title)}</div><div class="stack-s">${ls.map((L) => `<button class="pal-item" style="flex-direction:row;align-items:center;width:100%" data-act="insertTpl" data-t="${d.id}" data-l="${L.id}"><span class="step-n">${numOf(L)}</span><b class="grow">${esc(L.title)}</b><small>ДЗ: ${L.hw.tasks.length}</small></button>`).join('')}</div>` : ''; }).join('')}`);
+    },
+    saveTpl(d) { const c = renew(clone(idx[d.id])); c.uses = 0; S.templates.push(c); reindex(); save(); toast('Сохранено в «Шаблоны заданий»'); },
+    addFeedback() { S.feedback.push({ id: uid('fb'), t: 'Новый шаблон', x: '' }); reindex(); save(); render(); },
+
+    // --- сценарии
+    newScenario() { const a = renew(clone(S.scenarios[1] || S.scenarios[0])); a.title = 'Новый сценарий'; a.accent = 'pink'; S.scenarios.push(a); reindex(); save(); go(`#scenarios/${a.id}`); toast('Сценарий создан'); },
+    toggleScTask(d) { const a = idx[d.id]; const i = a.tasks.indexOf(d.k); if (i < 0) a.tasks.push(d.k); else a.tasks.splice(i, 1); save(); render(); },
+
+    // --- материалы
+    mediaFilter(d) { ui[d.f] = d.v; render(); },
+    editMedia(d) {
+      const x = d.id ? idx[d.id] : { title: '', kind: 'video', lesson: '', audience: ['ученик'], source: '', license: 'Собственный контент Shidao', offline: true };
+      modal(`${mh(d.id ? 'Материал' : 'Загрузить материал', 'Файл попадает в хранилище платформы и доступен для офлайн-загрузки урока')}
+        <div class="stack">
+          ${d.id ? '' : `<div class="upload" data-act="toast" data-msg="В прототипе файл не загружается">${icon('upload', 26)}<div style="margin-top:6px;font-weight:800">Перетащите файл или нажмите</div><div class="xs">Аудио, видео, изображения, PDF, презентации, карточки</div></div>`}
+          <label class="field"><span>Название</span><input class="input" id="mdTitle" value="${esc(x.title)}"></label>
+          <div class="grid g2"><label class="field"><span>Тип</span><select class="select" id="mdKind">${Object.entries(MKIND).map(([k, v]) => `<option value="${k}" ${x.kind === k ? 'selected' : ''}>${v[0]}</option>`).join('')}</select></label>
+          <label class="field"><span>Уроки</span><input class="input" id="mdLesson" value="${esc(x.lesson)}" placeholder="Например: Урок 4"></label></div>
+          <div class="field"><span>Для кого</span><div class="row wrap">${['преподаватель', 'ученик', 'родитель'].map((a) => `<label class="check small"><input type="checkbox" data-aud="${a}" ${x.audience.includes(a) ? 'checked' : ''}>${a}</label>`).join('')}</div></div>
+          <div class="grid g2"><label class="field"><span>Источник</span><input class="input" id="mdSource" value="${esc(x.source)}"></label>
+          <label class="field"><span>Лицензия</span><input class="input" id="mdLicense" value="${esc(x.license)}" list="licList"><datalist id="licList"><option>Собственный контент Shidao</option><option>Лицензия CC BY 4.0</option><option>Лицензия до 12.2027</option><option>Не указана</option></datalist></label></div>
+          <label class="check small"><input type="checkbox" id="mdOffline" ${x.offline ? 'checked' : ''}>Загружать на устройство преподавателя для офлайн-урока</label>
+        </div>
+        <div class="modal-f"><button class="btn" data-act="closeModal">Отмена</button><button class="btn dark" data-act="saveMedia" data-id="${d.id || ''}">Сохранить</button></div>`);
+    },
+    saveMedia(d) {
+      const g = (id) => document.getElementById(id).value.trim();
+      const data = { title: g('mdTitle') || 'Новый материал', kind: g('mdKind'), lesson: g('mdLesson') || '—', source: g('mdSource') || '—', license: g('mdLicense') || 'Не указана', offline: document.getElementById('mdOffline').checked, audience: [...modalRoot.querySelectorAll('input[data-aud]:checked')].map((x) => x.dataset.aud) };
+      if (d.id) Object.assign(idx[d.id], data); else S.media.unshift({ id: uid('x'), size: '—', ...data });
+      reindex(); save(); closeModal(); render(); toast(d.id ? 'Материал обновлён' : 'Материал добавлен');
+    },
+
     // --- двухэкранный режим
     duoPick(d) { ui.duoStep = +d.i; render(); },
     duoNav(d) { ui.duoStep += +d.d; render(); },
@@ -1088,15 +1297,19 @@
     if (el.dataset.actChange === 'duoTr') { if (e.type === 'change') { ui.trOn = el.checked; render(); } return; }
     if (el.dataset.sw) { idx[el.dataset.sw].swatches[+el.dataset.i] = el.value; save(); refresh(['student']); return; }
     if (el.dataset.kidgap) { ui.kid[el.dataset.kidgap].val = el.value; return; }
+    if (el.dataset.sl) { idx[el.dataset.sl].softLabels[+el.dataset.i] = el.value; save(); refresh(['scprev']); return; }
+    if (el.dataset.modk) { idx[el.dataset.modk].modules[el.dataset.m] = el.checked; save(); refresh(['scprev']); return; }
+    if (el.id === 'mq') { ui.mQ = el.value; refresh(['mlist']); return; }
     const { id, k } = el.dataset;
     if (!id || !k || !idx[id]) return;
     let v = el.type === 'checkbox' ? el.checked : el.value;
     if (el.dataset.type === 'num') v = Number(v) || 0;
     if (k === 'parentNote' && idx[id].parent) idx[id].parent.note = v;
     else idx[id][k] = v;
+    if (k === 'scenario' && idx[v]) idx[id].age = idx[v].age;
     save();
     if (el.dataset.live) refresh(el.dataset.live.split(','));
-    if (e.type === 'change' && el.type === 'checkbox' && !el.dataset.live) render();
+    if (e.type === 'change' && ((el.type === 'checkbox' && !el.dataset.live) || el.dataset.rerender)) render();
   }
   document.addEventListener('input', onField);
   document.addEventListener('change', onField);

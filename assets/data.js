@@ -205,5 +205,47 @@
     { id: id('x'), kind: 'pdf', title: 'Рабочая тетрадь, стр. 1–12', size: '4,4 МБ', lesson: 'Уроки 1–5', license: 'Собственный контент Shidao', source: 'Методический отдел' },
   ];
 
-  window.SEED = { methods, lessons, orgs, media };
+  // ---------------------------------------------------------------- Возрастные сценарии (ТЗ п. 2.5, 4.5)
+  const soft = ['Знакомимся с темой', 'Получается', 'Уверенно используем', 'Стоит немного повторить'];
+  const scenarios = [
+    { id: id('a'), title: 'Дошкольники', age: '4–6 лет', segment: 'Детские сады', accent: 'green', ui: 'game', progress: 'soft', softLabels: soft.slice(), ai: 'safe', hwMax: 10, font: 'XL', reading: 'none',
+      modules: { twoScreen: true, offline: true, parent: true, gamification: true, pron: true, hanzi: false, srs: false, dialog: false, analytics: false, hsk: false, plan: false },
+      tasks: ['choice', 'match', 'cards', 'audio', 'game', 'pron', 'photo', 'draw', 'parent', 'video'] },
+    { id: id('a'), title: 'Младшие школьники', age: '7–10 лет', segment: 'Частные школы · начальная', accent: 'purple', ui: 'school', progress: 'grades', softLabels: soft.slice(), ai: 'helper', hwMax: 20, font: 'L', reading: 'pinyin',
+      modules: { twoScreen: true, offline: true, parent: true, gamification: true, pron: true, hanzi: true, srs: true, dialog: false, analytics: false, hsk: false, plan: false },
+      tasks: ['choice', 'match', 'cards', 'audio', 'order', 'gap', 'hanzi', 'game', 'presentation', 'pron', 'text', 'photo', 'draw', 'parent'] },
+    { id: id('a'), title: 'Средняя и старшая школа', age: '11–18 лет', segment: 'Средняя и старшая школа', accent: 'blue', ui: 'teen', progress: 'grades', softLabels: soft.slice(), ai: 'extended', hwMax: 40, font: 'M', reading: 'full',
+      modules: { twoScreen: false, offline: true, parent: false, gamification: true, pron: true, hanzi: true, srs: true, dialog: true, analytics: true, hsk: true, plan: true },
+      tasks: ['choice', 'match', 'cards', 'audio', 'order', 'gap', 'hanzi', 'presentation', 'pron', 'text', 'file', 'video'] },
+  ];
+  methods.forEach((m, i) => { m.scenario = scenarios[i].id; });
+
+  // ---------------------------------------------------------------- Шаблоны заданий
+  const templates = [
+    { ...T.audio('Аудирование: кого назвали?', 'Послушай и выбери, что назвал герой', '这是猫。', ['狗', '猫', '马'], 1), uses: 12 },
+    { ...T.match('Найди пару: слово – картинка', 'Соедини слово и картинку', [['苹果', '🍎'], ['香蕉', '🍌'], ['西瓜', '🍉']]), uses: 18 },
+    { ...T.order('Собери фразу «Это …»', 'Расставь слова по порядку', ['这', '是', '苹果'], 'Это яблоко.'), uses: 7 },
+    { ...T.voice('Повтори за героем', 'Нажми на микрофон и повтори фразу', '你好！', 'nǐ hǎo!'), uses: 15 },
+    { ...T.gap('Пропуск: 我叫…', 'Вставь пропущенное слово', '我 ___ 小龙。', '叫', 'Меня зовут Сяо Лон.'), uses: 4 },
+    { ...T.photo('Творческая работа по теме', 'Нарисуй рисунок по теме урока и сфотографируй его', 'Рисунок по теме; ребёнок называет 3 слова урока'), uses: 9 },
+    { ...T.parent('Охота за предметами', 'Найдите дома 5 предметов по теме урока и назовите их по-китайски', 'Родитель отмечает слова, которые ребёнок назвал сам'), uses: 6 },
+  ];
+
+  const AUD = { video: ['ученик'], song: ['ученик', 'родитель'], audio: ['ученик'], image: ['ученик'], pdf: ['преподаватель'] };
+  media.forEach((x) => { x.audience = AUD[x.kind].slice(); x.offline = true; });
+  media.push(
+    { id: id('x'), kind: 'pres', title: 'Презентация к уроку 4 «Цвета»', size: '6,8 МБ', lesson: 'Урок 4', license: 'Собственный контент Shidao', source: 'Методический отдел', audience: ['преподаватель'], offline: true },
+    { id: id('x'), kind: 'cards', title: 'Карточки животных 狗 猫 兔子 马', size: '2,1 МБ', lesson: 'Урок 1', license: 'Собственный контент Shidao', source: 'Иллюстратор А. Ким', audience: ['преподаватель', 'ученик'], offline: true },
+    { id: id('x'), kind: 'pdf', title: 'Памятка родителю: как повторять цвета', size: '310 КБ', lesson: 'Урок 4', license: 'Собственный контент Shidao', source: 'Методический отдел', audience: ['родитель'], offline: false },
+    { id: id('x'), kind: 'video', title: 'Мультфильм «Сяо Лон на ферме»', size: '120 МБ', lesson: '—', license: 'Не указана', source: 'Google Drive (перенос)', audience: ['ученик'], offline: false },
+  );
+
+  const feedback = [
+    { id: id('fb'), t: 'Молодец!', x: 'Отличная работа! Ты правильно назвал все цвета. 太棒了！' },
+    { id: id('fb'), t: 'Почти получилось', x: 'Хорошая попытка! Давай ещё раз послушаем, как звучит третий тон.' },
+    { id: id('fb'), t: 'На доработку', x: 'Посмотри ещё раз на задание 2 и попробуй снова. У тебя получится!' },
+    { id: id('fb'), t: 'Родителю', x: 'Сегодня ребёнок уверенно использовал новые слова. Повторите дома песню урока.' },
+  ];
+
+  window.SEED = { methods, lessons, orgs, media, scenarios, templates, feedback };
 })();
