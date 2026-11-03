@@ -235,20 +235,23 @@
       <div><div class="eyebrow">Кабинет методиста</div><h1 style="margin-top:8px">Добрый день, Елена!</h1>
         <p class="muted" style="margin:8px 0 0;max-width:640px">Вы управляете программами, уроками, возрастными сценариями, материалами и шаблонами заданий. Преподаватели работают по опубликованной версии.</p></div>
       <div class="row wrap">
-        ${ref && ref.status !== 'published' ? `<a class="card flat pending-card" href="#lesson/${ref.id}/steps" title="Открыть урок">
-          <div class="row between" style="gap:8px"><span class="chip status-review"><span class="dot"></span>${ref.status === 'review' ? 'Ждёт публикации' : 'Черновик'}</span><span class="muted">${icon('chev', 16)}</span></div>
-          <b>Урок ${numOf(ref)} «${esc(ref.title)}»</b>
-          <div class="row xs muted" style="gap:10px"><span class="row" style="gap:4px">${icon('list', 12)}${ref.steps.length} шагов</span><span class="row" style="gap:4px">${icon('send', 12)}ДЗ: ${ref.hw.tasks.length}</span><span class="row" style="gap:4px">${icon('clock', 12)}${ref.duration} мин</span></div>
-        </a>` : ''}
         <button class="btn dark lg" data-act="newMethod">${icon('plus', 17)}Создать курс</button>
       </div>
     </div>
     <div class="home-grid">
       <div class="stack" style="--gap:16px">
+        ${ref && ref.status !== 'published' ? `<a class="card flat pending-card" href="#lesson/${ref.id}/steps">
+          <span class="num-big" style="width:52px;height:52px;font-size:22px;border-radius:16px">${numOf(ref)}</span>
+          <div class="grow" style="min-width:0">
+            <div class="row wrap" style="gap:8px"><span class="chip status-review"><span class="dot"></span>${ref.status === 'review' ? 'Ждёт публикации' : 'Черновик'}</span><span class="xs muted">${esc(methodOf(ref.id) ? methodOf(ref.id).title : '')} · v${esc(ref.version)}</span></div>
+            <b style="display:block;margin-top:6px">Урок ${numOf(ref)} «${esc(ref.title)}»</b>
+            <div class="row wrap xs muted" style="gap:12px;margin-top:4px"><span class="row" style="gap:4px">${icon('list', 12)}${ref.steps.length} шагов</span><span class="row" style="gap:4px">${icon('send', 12)}ДЗ: ${ref.hw.tasks.length}</span><span class="row" style="gap:4px">${icon('clock', 12)}${ref.duration} мин</span></div>
+          </div>
+          <span class="btn sm">Открыть урок ${icon('chev', 14)}</span>
+        </a>` : ''}
         <div class="grid g5">${zones.map(([ic, bg, t, d, h]) => `<a class="card flat zone" href="${h}"><span class="block-ico" style="background:${bg}">${icon(ic, 18)}</span><b>${t}</b><span class="xs muted">${d}</span></a>`).join('')}</div>
         <div class="card">
-          <div class="card-h"><h3>Что нужно сделать</h3><span class="chip">4</span></div>
-          ${todo('flag', '#ffe58a80', 'Урок 4 «Цвета» ждёт публикации', 'Эталонный урок: 16 шагов из компонентов библиотеки', ref ? `#lesson/${ref.id}/steps` : '#methods')}
+          <div class="card-h"><h3>Что нужно сделать</h3><span class="chip">3</span></div>
           ${todo('send', '#70b7ff38', 'Запрос преподавателя', 'Анна К. просит доп. карточки к уроку 3 «Фрукты»', '#media')}
           ${todo('book', '#c9b4ff59', 'Черновик программы для 7–10 лет', '2 урока, нужно заполнить шаги и ДЗ', `#method/${S.methods[1] ? S.methods[1].id : ''}`)}
           ${todo('folder', '#c9ff4f66', 'Перенос медиа из Google Drive', `${nolic} ${plural(nolic, 'файл', 'файла', 'файлов')} без сведений о лицензии`, '#media')}
@@ -268,10 +271,6 @@
           ${stat('folder', 'Материалы', S.media.length, nolic ? `${nolic} без лицензии` : 'лицензии заполнены')}
           ${stat('users', 'Возрастные сценарии', S.scenarios.length, S.scenarios.map((a) => a.age).join(' · '))}
           <div style="margin-top:14px"><div class="row between xs" style="margin-bottom:6px"><b>Готовность уроков</b><span class="muted">${Math.round((100 * pub) / Math.max(all.length, 1))}%</span></div><div class="meter"><i style="width:${(100 * pub) / Math.max(all.length, 1)}%"></i></div></div>
-        </div>
-        <div class="card">
-          <div class="card-h"><h3>Как устроена методика</h3><span class="xs muted">ТЗ п. 4.1</span></div>
-          <div class="row wrap" style="gap:6px">${['Направление', 'Методика', 'Уровень', 'Модуль', 'Урок', 'Шаг', 'Компонент / задание'].map((x, i) => `<span class="chip ${['green', 'purple', 'blue', 'pink', 'yellow', '', 'dark'][i]}">${x}</span>${i < 6 ? `<span class="muted">${icon('chev', 12)}</span>` : ''}`).join('')}</div>
         </div>
       </aside>
     </div>`;
