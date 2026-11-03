@@ -231,13 +231,6 @@
     ];
     const stat = (ic, label, n, sub) => `<div class="stat-row"><span class="block-ico" style="background:#14141409">${icon(ic, 15)}</span><div><div class="small" style="font-weight:700">${label}</div>${sub ? `<div class="xs muted">${sub}</div>` : ''}</div><b class="n">${n}</b></div>`;
     return `
-    <div class="row between wrap" style="gap:16px;margin-bottom:22px;align-items:flex-end">
-      <div><div class="eyebrow">Кабинет методиста</div><h1 style="margin-top:8px">Добрый день, Елена!</h1>
-        <p class="muted" style="margin:8px 0 0;max-width:640px">Вы управляете программами, уроками, возрастными сценариями, материалами и шаблонами заданий. Преподаватели работают по опубликованной версии.</p></div>
-      <div class="row wrap">
-        <button class="btn dark lg" data-act="newMethod">${icon('plus', 17)}Создать курс</button>
-      </div>
-    </div>
     <div class="home-grid">
       <div class="stack" style="--gap:16px">
         ${ref && ref.status !== 'published' ? `<a class="card flat pending-card" href="#lesson/${ref.id}/steps">
@@ -261,6 +254,7 @@
         </div>
       </div>
       <aside class="sticky stack">
+        <button class="btn dark lg" style="width:100%" data-act="newMethod">${icon('plus', 17)}Создать курс</button>
         <div class="card">
           <div class="card-h"><h3>Статистика</h3><span class="xs muted">на сегодня</span></div>
           ${stat('book', 'Программы', S.methods.length, `${S.methods.filter((m) => m.status === 'published').length} опубликована`)}
