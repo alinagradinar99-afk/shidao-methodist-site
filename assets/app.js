@@ -210,7 +210,7 @@
   }
 
   const crumbs = (items) => `<div class="crumbs">${items.map(([t, h]) => (h ? `<a href="${h}">${esc(t)}</a>` : `<span>${esc(t)}</span>`)).join('<span class="sep">/</span>')}</div>`;
-  const statusChip = (s) => `<span class="chip status-${s}"><span class="dot"></span>${STATUS[s] || s}</span>`;
+  const statusChip = (s) => `<span class="chip status-${s}">${STATUS[s] || s}</span>`;
   const notFound = () => `<div class="card"><h2>Страница не найдена</h2><p class="muted">Вернитесь к <a href="#methods"><u>списку методик</u></a>.</p></div>`;
 
   // ---------------------------------------------------------------- Главная
@@ -242,7 +242,7 @@
       <div class="stack" style="--gap:16px">
         ${ref && ref.status !== 'published' ? `<a class="card flat pending-card" href="#lesson/${ref.id}/steps">
           <div class="grow" style="min-width:0">
-            <div class="row wrap" style="gap:8px"><span class="chip status-review"><span class="dot"></span>${ref.status === 'review' ? 'Ждёт публикации' : 'Черновик'}</span><span class="xs muted">${esc(methodOf(ref.id) ? methodOf(ref.id).title : '')} · v${esc(ref.version)}</span></div>
+            <div class="row wrap" style="gap:8px"><span class="chip status-review">${ref.status === 'review' ? 'Ждёт публикации' : 'Черновик'}</span><span class="xs muted">${esc(methodOf(ref.id) ? methodOf(ref.id).title : '')} · v${esc(ref.version)}</span></div>
             <b style="display:block;margin-top:6px">Урок ${numOf(ref)} «${esc(ref.title)}»</b>
             <div class="row wrap xs muted" style="gap:12px;margin-top:4px"><span class="row" style="gap:4px">${icon('list', 12)}${ref.steps.length} шагов</span><span class="row" style="gap:4px">${icon('send', 12)}ДЗ: ${ref.hw.tasks.length}</span><span class="row" style="gap:4px">${icon('clock', 12)}${ref.duration} мин</span></div>
           </div>
