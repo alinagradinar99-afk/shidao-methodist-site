@@ -197,15 +197,14 @@
       <nav class="nav">
         ${item('home', '#home', 'Главная', 'home')}
         ${item('methods', '#methods', 'Программы', 'book')}
-        ${item('scenarios', '#scenarios', 'Возрастные сценарии', 'users')}
+        ${item('scenarios', '#scenarios', 'Сценарии', 'users')}
         ${item('media', '#media', 'Материалы', 'folder')}
         ${item('templates', '#templates', 'Шаблоны заданий', 'cards')}
         ${item('library', '#library', 'Компоненты', 'layers')}
       </nav>
       <div class="header-right">
         <button class="btn icon ghost" data-act="reset" title="Сбросить демо-данные">${icon('refresh', 15)}</button>
-        <div class="user-name"><b>Елена Ли</b><small>Методист · Shidao</small></div>
-        <div class="avatar">ЕЛ</div>
+        <div class="avatar" title="Елена Ли · методист">ЕЛ</div>
       </div>
     </header></div>`;
   }
