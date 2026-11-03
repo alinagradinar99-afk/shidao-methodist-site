@@ -386,6 +386,7 @@ h3 { font-size: 16px; font-weight: 800; margin: 0; }
 .vocab-row { display: grid; grid-template-columns: 1fr 1.1fr 1.3fr 40px 32px; gap: 8px; align-items: center; }
 .vocab-row + .vocab-row { margin-top: 6px; }
 .audio-dot { width: 32px; height: 32px; border-radius: 10px; background: #c9ff4f66; display: grid; place-items: center; cursor: pointer; border: 0; }
+.ref-banner svg { flex: none; }
 .ref-banner { display: flex; gap: 12px; align-items: center; padding: 12px 16px; border-radius: 18px; background: linear-gradient(100deg, #c9ff4f59, #c9b4ff40); font-size: 13.5px; margin-top: 16px; }
 .hint-box { font-size: 12.5px; background: #f2f8ff; border-radius: 14px; padding: 10px 12px; color: #33415c; display: flex; gap: 8px; }
 .divider { height: 1px; background: var(--line-2); margin: 16px 0; }
@@ -396,7 +397,7 @@ h3 { font-size: 16px; font-weight: 800; margin: 0; }
   .sticky { position: static; }
 }
 @media (max-width: 960px) {
-  .program, .hero, .duo, .parent-grid { grid-template-columns: 1fr; }
+  .program, .hero, .duo, .parent-grid { grid-template-columns: minmax(0, 1fr); }
   .g6 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .g3, .g4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .user-name { display: none; }
@@ -410,7 +411,7 @@ h3 { font-size: 16px; font-weight: 800; margin: 0; }
   .header { flex-wrap: wrap; gap: 8px 10px; }
   .nav { order: 3; width: 100%; margin-left: 0; }
   .pill { height: 2.2rem; padding: 0 .7rem; font-size: 13px; }
-  .builder, .builder.hw, .g2, .g3, .g4 { grid-template-columns: 1fr; }
+  .builder, .builder.hw, .g2, .g3, .g4 { grid-template-columns: minmax(0, 1fr); }
   .steps-list { max-height: none; }
   .lesson-row { grid-template-columns: 36px minmax(0, 1fr) auto; }
   .lesson-row .handle, .lesson-row .row-actions { display: none; }
