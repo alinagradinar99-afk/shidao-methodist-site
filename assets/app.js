@@ -2,7 +2,7 @@
 // Без сборки: состояние в localStorage, маршрутизация по hash.
 
 (() => {
-  const KEY = 'shidao-methodist-v1';
+  const KEY = 'shidao-methodist-v2';
   const clone = (o) => JSON.parse(JSON.stringify(o));
 
   let S = null;
