@@ -191,7 +191,7 @@
   function header(active) {
     const item = (k, href, label, ic) => `<a class="pill ${active === k ? 'active' : ''}" href="${href}">${icon(ic, 15)}${label}</a>`;
     return `<div class="header-wrap"><header class="header">
-      <a class="logo" href="#home">Shidao<sup>™</sup><span class="role-badge">Кабинет методиста</span></a>
+      <a class="logo" href="#home"><span>Shidao<sup>™</sup></span><span class="role-badge">Кабинет методиста</span></a>
       <nav class="nav">
         ${item('home', '#home', 'Главная', 'home')}
         ${item('methods', '#methods', 'Методики', 'book')}

@@ -235,7 +235,8 @@ h3 { font-size: 16px; font-weight: 800; margin: 0; }
 .step-n { width: 30px; height: 30px; border-radius: 10px; background: #14141410; display: grid; place-items: center; font-weight: 900; font-size: 13px; }
 .step-item.on .step-n { background: #141414; color: #fff; }
 .step-title { font-weight: 700; font-size: 13.5px; line-height: 1.25; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-.step-sub { font-size: 11.5px; color: var(--muted); display: flex; gap: 6px; margin-top: 2px; }
+.step-sub { font-size: 11.5px; color: var(--muted); display: flex; gap: 6px; margin-top: 2px; white-space: nowrap; overflow: hidden; }
+.step-sub span:last-child { overflow: hidden; text-overflow: ellipsis; }
 .time-bar { height: 8px; border-radius: 8px; background: #1414140d; overflow: hidden; display: flex; }
 .time-bar i { display: block; height: 100%; }
 .panel-switch { display: flex; gap: 8px; margin: 16px 0; flex-wrap: wrap; }
@@ -406,6 +407,9 @@ h3 { font-size: 16px; font-weight: 800; margin: 0; }
   .header-wrap { padding: 10px 10px 0; }
   .header { padding-left: 14px; }
   .role-badge { display: none; }
+  .header { flex-wrap: wrap; gap: 8px 10px; }
+  .nav { order: 3; width: 100%; margin-left: 0; }
+  .pill { height: 2.2rem; padding: 0 .7rem; font-size: 13px; }
   .builder, .builder.hw, .g2, .g3, .g4 { grid-template-columns: 1fr; }
   .steps-list { max-height: none; }
   .lesson-row { grid-template-columns: 36px minmax(0, 1fr) auto; }
