@@ -235,7 +235,7 @@
       <div><div class="eyebrow">Кабинет методиста</div><h1 style="margin-top:8px">Добрый день, Елена!</h1>
         <p class="muted" style="margin:8px 0 0;max-width:640px">Вы управляете программами, уроками, возрастными сценариями, материалами и шаблонами заданий. Преподаватели работают по опубликованной версии.</p></div>
       <div class="row wrap">
-        ${ref ? `<a class="btn lg" href="#lesson/${ref.id}/steps">${icon('layers', 16)}Урок 4 «Цвета»</a>` : ''}
+        ${ref && ref.status !== 'published' ? `<a class="pending-pill" href="#lesson/${ref.id}/steps" title="Открыть урок"><span class="chip status-review"><span class="dot"></span>${ref.status === 'review' ? 'Ждёт публикации' : 'Черновик'}</span><span>Урок ${numOf(ref)} «${esc(ref.title)}»</span>${icon('chev', 15)}</a>` : ''}
         <button class="btn dark lg" data-act="newMethod">${icon('plus', 17)}Создать курс</button>
       </div>
     </div>

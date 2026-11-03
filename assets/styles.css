@@ -450,3 +450,8 @@ h3 { font-size: 16px; font-weight: 800; margin: 0; }
 @media (max-width: 1300px) { .header .user-name { display: none; } .g5 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 960px) { .home-grid, .scen-grid { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 760px) { .g5 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+.pending-pill { display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 14px 0 8px; border-radius: 999px; background: #fff8e0; border: 1px solid #ffe2a3; font-size: 14px; font-weight: 700; color: #141414; }
+.pending-pill:hover { background: #fff2c7; }
+.pending-pill .chip { background: #ffe58a; }
+.pending-pill svg { color: #b08a1c; }
