@@ -299,7 +299,6 @@
     </div>
     <div class="grid g3">
       ${list.map(methodCard).join('')}
-      <div class="card new-card" data-act="newMethod"><div><div class="avatar" style="margin:0 auto 12px;background:#c9ff4f">${icon('plus', 18)}</div><h3>Создать курс</h3><p class="small muted" style="max-width:240px">Для детского сада, школы, индивидуальных занятий или дополнительного курса</p></div></div>
     </div>`;
   }
   function methodCard(m) {
