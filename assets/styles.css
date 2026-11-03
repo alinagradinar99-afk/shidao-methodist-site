@@ -454,3 +454,4 @@ h3 { font-size: 16px; font-weight: 800; margin: 0; }
 .pending-card { display: flex; align-items: center; gap: 16px; padding: 16px 18px; border-left: 4px solid #ffd23f; transition: transform .15s; }
 .pending-card:hover { transform: translateY(-2px); }
 .pending-card b { font-size: 16px; }
+.pending-card .num-big { background: radial-gradient(circle at 18% 0, #c9ff4f 0, #e9ffb0 80%); display: grid; place-items: center; font-weight: 900; flex: none; }
