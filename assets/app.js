@@ -211,9 +211,6 @@
         ${item('home', '#home', 'Главная', 'home')}
         ${item('methods', '#methods', 'Программы', 'book')}
         ${item('scenarios', '#scenarios', 'Сценарии', 'users')}
-        ${item('media', '#media', 'Материалы', 'folder')}
-        ${item('templates', '#templates', 'Шаблоны заданий', 'cards')}
-        ${item('library', '#library', 'Компоненты', 'layers')}
       </nav>
       <div class="header-right">
         <button class="btn icon ghost" data-act="reset" title="Сбросить демо-данные">${icon('refresh', 15)}</button>
@@ -247,14 +244,8 @@
           </div>
           <span class="btn sm">Открыть урок ${icon('chev', 14)}</span>
         </a>` : ''}
-        <div class="card">
-          <div class="card-h"><h3>Что нужно сделать</h3><span class="chip">3</span></div>
-          ${todo('send', '#70b7ff38', 'Запрос преподавателя', 'Анна К. просит доп. карточки к уроку 3 «Фрукты»', '#media')}
-          ${todo('book', '#c9b4ff59', 'Черновик программы для 7–10 лет', '2 урока, нужно заполнить шаги и ДЗ', `#method/${S.methods[1] ? S.methods[1].id : ''}`)}
-          ${todo('folder', '#c9ff4f66', 'Перенос медиа из Google Drive', `${nolic} ${plural(nolic, 'файл', 'файла', 'файлов')} без сведений о лицензии`, '#media')}
-        </div>
         <div>
-          <div class="row between" style="margin:12px 0 14px"><h2>Недавние уроки</h2><a class="btn sm" href="#methods">Все программы ${icon('chev', 14)}</a></div>
+          <div class="row between" style="margin:8px 0 14px"><h2>Недавние уроки</h2><a class="btn sm" href="#methods">Все программы ${icon('chev', 14)}</a></div>
           <div class="grid g2">${recent.map(lessonCard).join('')}</div>
         </div>
       </div>
@@ -264,9 +255,8 @@
           <div class="card-h"><h3>Статистика</h3><span class="xs muted">на сегодня</span></div>
           ${stat('book', 'Программы', S.methods.length, `${S.methods.filter((m) => m.status === 'published').length} опубликована`)}
           ${stat('list', 'Уроки', all.length, `${pub} опубликовано, ${all.length - pub} в работе`)}
-          ${stat('layers', 'Шаги уроков', steps, 'из компонентов библиотеки')}
-          ${stat('send', 'Задания ДЗ', tasks, `${S.templates.length} шаблонов`)}
-          ${stat('folder', 'Материалы', S.media.length, nolic ? `${nolic} без лицензии` : 'лицензии заполнены')}
+          ${stat('layers', 'Шаги уроков', steps, 'во всех программах')}
+          ${stat('send', 'Задания ДЗ', tasks, `в ${all.filter((l) => l.hw.tasks.length).length} ${plural(all.filter((l) => l.hw.tasks.length).length, 'уроке', 'уроках', 'уроках')}`)}
           ${stat('users', 'Возрастные сценарии', S.scenarios.length, S.scenarios.map((a) => a.age).join(', '))}
           <div style="margin-top:14px"><div class="row between xs" style="margin-bottom:6px"><b>Готовность уроков</b><span class="muted">${Math.round((100 * pub) / Math.max(all.length, 1))}%</span></div><div class="meter"><i style="width:${(100 * pub) / Math.max(all.length, 1)}%"></i></div></div>
         </div>
@@ -356,10 +346,9 @@
             <div class="cover-pick cover-${m.accent || 'green'}"><span class="zh">${esc(m.zh || '世')}</span><button class="btn xs" data-act="fakeUpload" data-what="обложку программы">${icon('image', 12)}Обложка</button></div>
             <label class="field"><span>Название на китайском</span><input class="input zh" data-id="${m.id}" data-k="zh" value="${esc(m.zh || '')}" placeholder="我周围的世界"></label>
             <label class="field"><span>Цели обучения и планируемый результат</span><textarea class="textarea" style="min-height:70px" data-id="${m.id}" data-k="goals">${esc(m.goals || '')}</textarea></label>
-            <div class="grid g2"><label class="field"><span>Длительность урока, мин</span><input class="input" type="number" min="10" data-type="num" data-id="${m.id}" data-k="lessonMin" value="${m.lessonMin || 45}"></label><label class="field"><span>Размер группы</span><input class="input" data-id="${m.id}" data-k="group" value="${esc(m.group || '')}" placeholder="4–6 детей, до 8"></label></div>
+            <div class="grid g2"><label class="field"><span>Урок, мин</span><input class="input" type="number" min="10" data-type="num" data-id="${m.id}" data-k="lessonMin" value="${m.lessonMin || 45}"></label><label class="field"><span>Размер группы</span><input class="input" data-id="${m.id}" data-k="group" value="${esc(m.group || '')}" placeholder="4–6 детей, до 8"></label></div>
             ${sel(m, 'segment', 'Сегмент', SEGMENTS)}
-            <label class="field"><span>Возрастной сценарий</span><select class="select" data-id="${m.id}" data-k="scenario" data-rerender="1">${S.scenarios.map((a) => `<option value="${a.id}" ${m.scenario === a.id ? 'selected' : ''}>${esc(a.title)}, ${esc(a.age)}</option>`).join('')}</select></label>
-            <a class="xs" href="#scenarios/${m.scenario || ''}"><u>Открыть настройки сценария</u></a>
+            <label class="field"><span>Возрастной сценарий</span><select class="select" data-id="${m.id}" data-k="scenario" data-rerender="1">${S.scenarios.map((a) => `<option value="${a.id}" ${m.scenario === a.id ? 'selected' : ''}>${esc(a.title)}, ${esc(a.age)}</option>`).join('')}</select><a class="xs muted field-help" href="#scenarios/${m.scenario || ''}"><u>Открыть настройки сценария</u></a></label>
             <label class="field"><span>Формат</span><input class="input" data-id="${m.id}" data-k="format" value="${esc(m.format)}"></label>
             <label class="field"><span>Описание</span><textarea class="textarea" data-id="${m.id}" data-k="description">${esc(m.description)}</textarea></label>
             <div class="hint-box">${icon('sparkle', 16)}<span>Возрастной сценарий определяет интерфейс ученика, модель прогресса (мягкая / оценки) и режим ИИ</span></div>
@@ -384,6 +373,7 @@
   const progListEditor = (m) => PROG_LISTS.map(([k, t, ph, withMin]) => `<details class="tv-acc"><summary>${t}<span class="xs muted" style="font-weight:500">${(m[k] || []).length}</span></summary><div class="stack-s" style="margin-top:8px">
     ${(m[k] || []).map((r, i) => `<div class="prog-row"><div class="row" style="gap:6px">${withMin ? `<span class="step-n">${i + 1}</span>` : ''}<input class="input grow" data-id="${r.id}" data-k="title" value="${esc(r.title)}" placeholder="${ph}">${withMin ? `<input class="input" style="width:76px" data-id="${r.id}" data-k="min" value="${esc(r.min || '')}" placeholder="мин">` : ''}<button class="btn icon ghost danger" data-act="delProgRow" data-id="${m.id}" data-list="${k}" data-row="${r.id}" title="Удалить">${icon('trash', 14)}</button></div><textarea class="textarea" style="min-height:48px;margin-top:6px" data-id="${r.id}" data-k="text" placeholder="Описание">${esc(r.text || '')}</textarea></div>`).join('')}
     <button class="btn xs" style="align-self:flex-start" data-act="addProgRow" data-id="${m.id}" data-list="${k}">${icon('plus', 12)}Добавить</button></div></details>`).join('');
+  const FEATURES = { media: false, templates: false, library: false };
   const TEACHER_INFO = [['approach', 'Подход к обучению'], ['structure', 'Устройство занятия'], ['prep', 'Подготовка учителя'], ['principles', 'Педагогические принципы'], ['results', 'Ожидаемые результаты'], ['safety', 'Требования безопасности']];
   const sel = (o, k, label, opts, extra = '') => `<label class="field"><span>${label}</span><select class="select" data-id="${o.id}" data-k="${k}" ${extra}>${opts.map((x) => `<option ${o[k] === x ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select></label>`;
 
@@ -417,7 +407,6 @@
     ${crumbs([['Программы', '#methods'], m ? [m.title, `#method/${m.id}`] : ['—'], [`Урок ${n}`]])}
     <div class="lesson-head">
       <div class="row" style="gap:16px;align-items:flex-start;min-width:0;flex:1">
-        <span class="num-big">${n}</span>
         <div class="grow">
           <div class="row wrap" style="gap:6px">${statusChip(L.status)}<span class="chip">v${esc(L.version)}</span><span class="chip blue">${esc(L.age)}</span><span class="chip">${icon('clock', 12)}${L.duration} мин</span>${L.reference ? '<span class="chip green">Эталонный урок</span>' : ''}</div>
           <input class="input bare title" style="font-size:32px;margin-top:6px" data-id="${L.id}" data-k="title" value="${esc(L.title)}">
@@ -448,7 +437,7 @@
         <div class="grid g3">
           ${sel(L, 'age', 'Возраст', AGES)}
           ${sel(L, 'difficulty', 'Сложность', DIFF)}
-          <label class="field"><span>Длительность, мин</span><input class="input" type="number" min="5" data-type="num" data-id="${L.id}" data-k="duration" value="${L.duration}"></label>
+          <label class="field"><span>Минут</span><input class="input" type="number" min="5" data-type="num" data-id="${L.id}" data-k="duration" value="${L.duration}"></label>
         </div>
         <div class="field"><span>Форматы проведения</span><div class="props">${Object.entries(FORMATS).map(([k, t]) => `<span class="prop ${L.formats.includes(k) ? 'on' : ''}" data-act="toggleFormat" data-k="${k}">${t}</span>`).join('')}</div></div>
         <div class="field"><span>Модель прогресса</span><div class="seg">${[['soft', 'Мягкая (4–6 лет)'], ['grades', 'Оценки учителя']].map(([k, t]) => `<button class="${L.assessment === k ? 'on' : ''}" data-act="setField" data-id="${L.id}" data-k="assessment" data-v="${k}">${t}</button>`).join('')}</div>
@@ -509,7 +498,7 @@
       <div class="grid step-meta" style="margin-top:12px">
         <label class="field"><span>Цель шага</span><input class="input" data-id="${s.id}" data-k="goal" value="${esc(s.goal)}"></label>
         <label class="field"><span>Тип активности</span><select class="select" data-id="${s.id}" data-k="activity" data-live="steps">${Object.entries(ACT).map(([k, [t]]) => `<option value="${k}" ${s.activity === k ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
-        <label class="field"><span>Длительность, мин</span><input class="input" type="number" min="1" data-type="num" data-id="${s.id}" data-k="duration" data-live="steps" value="${s.duration}"></label>
+        <label class="field"><span>Минут</span><input class="input" type="number" min="1" data-type="num" data-id="${s.id}" data-k="duration" data-live="steps" value="${s.duration}"></label>
       </div>
       <div class="panel-switch"><div class="seg">
         <button class="${ui.stepView === 'teacher' ? 'on' : ''}" data-act="stepView" data-v="teacher">${icon('tablet', 14)}Инструкция учителю</button>
@@ -677,8 +666,8 @@
       <div class="field"><span>Материалы для повторения</span><div class="props">${[...new Set([...matNames(L), ...(hw.materials || [])])].map((x) => `<span class="prop ${(hw.materials || []).includes(x) ? 'on' : ''}" data-act="toggleHwMat" data-m="${esc(x)}">${esc(x)}</span>`).join('')}</div></div>
       <label class="field"><span>Формат ответа</span><input class="input" data-id="${hw.id}" data-k="format" value="${esc(hw.format || '')}" placeholder="Например: интерактивная практика + квиз из 5 вопросов"></label>
       <div class="grid g2">
-        <label class="field"><span>Срок по умолчанию, дней</span><input class="input" type="number" min="1" data-type="num" data-id="${hw.id}" data-k="dueDays" value="${hw.dueDays}"></label>
-        <label class="field"><span>Время выполнения, мин</span><input class="input" type="number" min="1" data-type="num" data-id="${hw.id}" data-k="estimate" value="${hw.estimate}"></label>
+        <label class="field"><span>Срок, дней</span><input class="input" type="number" min="1" data-type="num" data-id="${hw.id}" data-k="dueDays" value="${hw.dueDays}"></label>
+        <label class="field"><span>Время, мин</span><input class="input" type="number" min="1" data-type="num" data-id="${hw.id}" data-k="estimate" value="${hw.estimate}"></label>
       </div>
       <div class="field"><span>Проверка</span><div class="seg">${[['auto', 'Автопроверка'], ['hybrid', 'Авто + преподаватель'], ['manual', 'Проверяет преподаватель']].map(([k, t]) => `<button class="${hw.check === k ? 'on' : ''}" data-act="setField" data-id="${hw.id}" data-k="check" data-v="${k}">${t}</button>`).join('')}</div></div>
       <div class="field"><span>Оценивание</span><div class="seg">${[['soft', 'Мягкая модель'], ['grades', 'Баллы и оценка']].map(([k, t]) => `<button class="${hw.grading === k ? 'on' : ''}" data-act="setField" data-id="${hw.id}" data-k="grading" data-v="${k}">${t}</button>`).join('')}</div></div>
@@ -700,7 +689,7 @@
     return `<div class="card stack">
       <div class="row" style="gap:10px"><span class="block-ico" style="background:#c9b4ff59;width:38px;height:38px">${icon(meta.icon, 18)}</span><div class="grow"><div class="xs muted">Задание ${i + 1}, ${meta.label}</div><input class="input bare" style="font-weight:900;font-size:20px" data-id="${t.id}" data-k="title" data-live="hwlist,kid" value="${esc(t.title)}"></div>
         <span class="check-badge check-${meta.check}">${CHECK[meta.check]}</span>
-        ${ui.lid === '__tpl' ? `<button class="btn sm" data-act="useTplModal" data-id="${t.id}">${icon('plus', 13)}В урок</button>` : `<button class="btn sm ghost" data-act="saveTpl" data-id="${t.id}" title="Сохранить как шаблон">${icon('cards', 13)}В шаблоны</button>`}<button class="btn icon ghost" data-act="dupTask" data-id="${t.id}" title="Дублировать">${icon('copy', 15)}</button><button class="btn icon ghost danger" data-act="del" data-id="${t.id}" title="Удалить">${icon('trash', 15)}</button></div>
+        ${ui.lid === '__tpl' ? `<button class="btn sm" data-act="useTplModal" data-id="${t.id}">${icon('plus', 13)}В урок</button>` : ''}<button class="btn icon ghost" data-act="dupTask" data-id="${t.id}" title="Дублировать">${icon('copy', 15)}</button><button class="btn icon ghost danger" data-act="del" data-id="${t.id}" title="Удалить">${icon('trash', 15)}</button></div>
       <label class="field"><span>Инструкция для ученика</span><textarea class="textarea" style="min-height:60px" data-id="${t.id}" data-k="instruction" data-live="kid">${esc(t.instruction)}</textarea></label>
       ${taskFields(L, t)}
       <div class="grid" style="grid-template-columns:120px 1fr">
@@ -918,7 +907,7 @@
   // --- Для родителя
   function tParent(L) {
     const review = L.steps.filter((s) => s.blocks.some((b) => b.ctx.includes('review')));
-    return `<div class="grid parent-grid" style="align-items:start">
+    return `<div>
       <div class="stack">
         <div class="card stack">
           <h3>Материалы для домашнего повторения</h3>
@@ -929,18 +918,6 @@
           <div class="card-h"><h3>Шаги в повторении</h3><span class="xs muted">${review.length} из ${L.steps.length}</span></div>
           ${L.steps.map((s, i) => { const on = review.includes(s); return `<div class="todo"><span class="step-n" style="${on ? 'background:#c9ff4f' : ''}">${i + 1}</span><div class="grow"><b class="small">${esc(s.title)}</b><div class="xs muted">${s.blocks.map((b) => COMP[b.type].label).join(', ')}</div></div><span class="chip ${on ? 'green' : ''}">${on ? 'в повторении' : 'только урок'}</span></div>`; }).join('')}
         </div>
-      </div>
-      <div class="sticky">
-        <div class="eyebrow" style="margin-bottom:10px">Кабинет родителя, предпросмотр</div>
-        <div class="screen-frame" style="border-radius:30px;padding:10px"><div class="screen phone" style="background:linear-gradient(180deg,#fff,#f6f6f9)">
-          <div class="screen-head"><span>Миша, группа «Панды»</span><span>${icon('heart', 12)}</span></div>
-          <div class="screen-body">
-            <div class="s-block"><div class="xs muted">Урок ${numOf(L)} пройден</div><b>${esc(L.title)}</b><div class="xs" style="margin-top:4px;color:#4f5b75">${esc(L.goal)}</div></div>
-            <div class="s-block"><div class="s-title">Слова урока</div><div class="row wrap" style="gap:6px">${L.vocab.slice(0, 6).map((w) => `<span class="chip zh" style="background:#f1f4fa">${esc(w.zh)}, ${esc(w.ru)}</span>`).join('')}</div></div>
-            <div class="s-block"><div class="row between"><b class="small">Домашнее задание</b><span class="chip yellow">Назначено</span></div><div class="xs muted">${L.hw.tasks.length} заданий, ~${L.hw.estimate} мин, ${L.hw.withParent ? 'вместе с родителем' : 'самостоятельно'}</div>${L.hw.parentNote ? `<div class="xs" style="margin-top:6px">${esc(L.hw.parentNote)}</div>` : ''}</div>
-            <div class="s-block"><div class="s-title">Как повторить дома</div><div class="xs">${esc(L.parent.note)}</div></div>
-            <div class="s-block"><div class="s-title">Прогресс</div><span class="chip green">Получается</span></div>
-          </div></div></div>
       </div>
     </div>`;
   }
@@ -1320,7 +1297,7 @@
       const m = inTpl ? null : methodOf(ui.lid);
       const sc = m && S.scenarios.find((x) => x.id === m.scenario);
       const grp = (f, title) => `<div class="eyebrow" style="margin:16px 0 8px">${title}</div><div class="palette">${Object.entries(TT).filter(([, v]) => f(v)).map(([k, v]) => `<button class="pal-item ${v.stage2 ? 'disabled' : ''}" ${v.stage2 ? '' : `data-act="addTask" data-type="${k}"`}><span class="block-ico" style="background:#14141409">${icon(v.icon, 15)}</span><b>${v.label}</b><small>${v.desc}</small>${sc && !v.stage2 && !sc.tasks.includes(k) ? `<span class="chip yellow" style="font-size:10.5px;align-self:flex-start">вне сценария</span>` : ''}</button>`).join('')}</div>`;
-      const tpls = inTpl ? '' : `<div class="eyebrow" style="margin:4px 0 8px">Из шаблонов заданий</div><div class="palette">${S.templates.map((t) => `<button class="pal-item" data-act="insertTpl" data-t="${t.id}" data-l="${ui.lid}"><span class="block-ico" style="background:#c9ff4f66">${icon(TT[t.type].icon, 15)}</span><b>${esc(t.title)}</b><small>${TT[t.type].label}</small></button>`).join('')}</div>`;
+      const tpls = (inTpl || !FEATURES.templates) ? '' : `<div class="eyebrow" style="margin:4px 0 8px">Из шаблонов заданий</div><div class="palette">${S.templates.map((t) => `<button class="pal-item" data-act="insertTpl" data-t="${t.id}" data-l="${ui.lid}"><span class="block-ico" style="background:#c9ff4f66">${icon(TT[t.type].icon, 15)}</span><b>${esc(t.title)}</b><small>${TT[t.type].label}</small></button>`).join('')}</div>`;
       modal(`${mh(inTpl ? 'Новый шаблон задания' : 'Добавить задание', inTpl ? 'Выберите тип задания' : sc ? `Возрастной сценарий программы: ${esc(sc.title)}, ${esc(sc.age)}` : '')}${tpls}${grp((v) => v.mvp && v.check === 'auto', 'Автопроверка')}${grp((v) => v.mvp && v.check !== 'auto', 'Проверяет преподаватель')}${grp((v) => !v.mvp, 'Расширенные задания, после MVP')}`, true);
     },
     addTask(d) { const t = newTask(d.type); curLesson().hw.tasks.push(t); ui.taskId = t.id; reindex(); save(); closeModal(); render(); toast(`Добавлено: ${TT[d.type].label}`); },

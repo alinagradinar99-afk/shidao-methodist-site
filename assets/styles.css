@@ -83,7 +83,7 @@ h3 { font-size: 16px; font-weight: 800; margin: 0; }
 .row.wrap { flex-wrap: wrap; }
 .between { justify-content: space-between; }
 .grow { flex: 1; min-width: 0; }
-.stack > * + * { margin-top: 12px; }
+.stack > * + * { margin-top: 16px; }
 .stack-s > * + * { margin-top: 8px; }
 .grid { display: grid; gap: 16px; }
 .g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -96,7 +96,7 @@ h3 { font-size: 16px; font-weight: 800; margin: 0; }
 .card.flat { box-shadow: var(--shadow-s); }
 .card.soft { background: var(--soft); box-shadow: none; border-color: transparent; }
 .card.tint-blue { background: linear-gradient(180deg, #f2f8ff, #fff); }
-.card-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+.card-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
 
 /* ---------- Buttons */
 .btn {
@@ -132,7 +132,7 @@ h3 { font-size: 16px; font-weight: 800; margin: 0; }
 
 /* ---------- Forms */
 .field { display: block; }
-.field > span { display: block; font-size: 12px; font-weight: 700; color: #4a4c55; margin-bottom: 6px; }
+.field > span { display: block; font-size: 12px; font-weight: 700; color: #4a4c55; margin-bottom: 8px; line-height: 16px; }
 .input, .select, .textarea {
   width: 100%; border: 1px solid #14141418; background: #fff; border-radius: 13px; padding: 9px 12px; outline: none; font-size: 14px;
   transition: border-color .12s, box-shadow .12s;
@@ -193,7 +193,7 @@ h3 { font-size: 16px; font-weight: 800; margin: 0; }
 .level { padding: 18px; }
 .level + .level { margin-top: 16px; }
 .level-h { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
-.level-num { width: 36px; height: 36px; border-radius: 12px; background: #c9ff4f66; color: var(--foreground); font-weight: 700; display: grid; place-items: center; flex: none; }
+.level-num { width: 36px; height: 36px; border-radius: 12px; background: #141414; color: #fff; font-weight: 800; display: grid; place-items: center; flex: none; }
 .module { background: var(--soft); border-radius: 18px; padding: 12px; }
 .module + .module { margin-top: 10px; }
 .module-h { display: flex; align-items: center; gap: 8px; padding: 2px 4px 10px; }
@@ -484,7 +484,8 @@ h3 { font-size: 16px; font-weight: 800; margin: 0; }
 .tv-hw { border-radius: 16px; padding: 14px; background: linear-gradient(120deg, #f5f0ff, #fff); border: 1px solid #c9b4ff55; }
 .tv-student { margin-top: 10px; display: grid; gap: 8px; }
 .tv-student:empty { display: none; }
-.cover-pick { height: 84px; border-radius: 16px; display: flex; align-items: flex-end; justify-content: space-between; padding: 10px; font-size: 30px; font-weight: 900; }
+.cover-pick { height: 84px; border-radius: 16px; display: flex; align-items: flex-end; justify-content: space-between; gap: 10px; padding: 12px; font-size: 24px; font-weight: 900; }
+.cover-pick .zh { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 @media (max-width: 760px) { .step-meta { grid-template-columns: 1fr 1fr; } .step-meta > :first-child { grid-column: 1 / -1; } }
 
 .bao-card { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 12px 14px; border-radius: 22px; background: #fff; border: 1px solid var(--line-2); }
@@ -495,9 +496,14 @@ h3 { font-size: 16px; font-weight: 800; margin: 0; }
 
 .prog-stats { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 28px 0 22px; font-size: 13.5px; color: var(--text-2); }
 .prog-stats span { display: inline-flex; align-items: center; gap: 6px; }
-.prog-stats b { color: var(--foreground); font-weight: 700; }
+.prog-stats b { color: inherit; font-weight: inherit; }
 
 .prog-row { border: 1px solid var(--line-2); border-radius: 14px; padding: 10px; background: #fafafb; }
 .tv-tile { border: 1px solid var(--line-2); border-radius: 14px; padding: 10px 12px; background: #fff; }
 .anat { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 @media (max-width: 720px) { .anat { grid-template-columns: minmax(0, 1fr); } }
+
+.grid > .field > span, .step-meta .field > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.grid > .field { min-width: 0; }
+.field-help { display: inline-block; margin-top: 8px; }
+.field .textarea, .field .input, .field .select { width: 100%; }
