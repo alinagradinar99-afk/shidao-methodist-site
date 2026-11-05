@@ -296,7 +296,7 @@
     const f = ui.methodsFilter;
     const list = S.methods.filter((m) => f === 'all' || (f === 'published' ? m.status === 'published' : m.status !== 'published'));
     return `
-    <h1 style="margin:0 0 16px">Программы и методики</h1>
+    <h1 style="margin:0 0 28px">Программы и методики</h1>
     <div class="row between wrap" style="margin-bottom:20px;gap:14px">
       <div class="seg">${[['all', 'Все'], ['published', 'Опубликованы'], ['draft', 'В работе']].map(([k, t]) => `<button class="${f === k ? 'on' : ''}" data-act="filterMethods" data-v="${k}">${t}</button>`).join('')}</div>
       <button class="btn dark" data-act="newMethod">${icon('plus', 15)}Создать курс</button>
@@ -338,7 +338,7 @@
         <button class="btn dark" data-act="publish" data-id="${m.id}">${icon('send', 15)}Опубликовать v${nextVersion(m.version)}</button>
       </div>
     </div>
-    <div class="grid g6" style="margin:18px 0 20px">
+    <div class="grid g6" style="margin:32px 0 20px">
       ${[[m.levels.length, 'уровней'], [modules, 'модулей'], [ls.length, 'уроков'], [steps, 'шагов'], [tasks, 'заданий ДЗ'], [`${Math.round(ls.reduce((a, l) => a + (+l.duration || 0), 0) / 6) / 10} ч`, 'учебного времени']].map(([v, t]) => `<div class="stat" style="background:#ffffffb3"><b>${v}</b><span class="xs muted">${t}</span></div>`).join('')}
     </div>
     <div class="program">
@@ -1000,7 +1000,7 @@
     const usage = (type) => all.reduce((a, l) => a + l.steps.reduce((x, s) => x + s.blocks.filter((b) => b.type === type).length, 0), 0);
     const tusage = (type) => all.reduce((a, l) => a + l.hw.tasks.filter((t) => t.type === type).length, 0);
     const group = (check, title) => `<div class="card"><div class="card-h"><h3>${title}</h3><span class="check-badge check-${check === 'ai' ? 'hybrid' : check}">${CHECK[check]}</span></div><div class="stack-s">${Object.entries(TT).filter(([, v]) => v.check === check).map(([k, v]) => `<div class="row" style="gap:10px"><span class="block-ico" style="background:#14141409">${icon(v.icon, 14)}</span><div class="grow"><b class="small">${v.label}</b><div class="xs muted">${v.desc}</div></div><span class="xs muted">${tusage(k)}</span></div>`).join('')}</div></div>`;
-    return `<div style="margin-bottom:20px"><h1>Библиотека компонентов</h1></div>
+    return `<div style="margin-bottom:32px"><h1>Библиотека компонентов</h1></div>
       <h2 style="margin-bottom:14px">Компоненты урока</h2>
       <div class="grid g4">${Object.entries(COMP).map(([k, c]) => `<div class="card flat"><span class="block-ico" style="background:${c.color};width:42px;height:42px">${icon(c.icon, 20)}</span><h3 style="margin-top:12px">${c.label}</h3><p class="small muted" style="margin:6px 0 12px">${c.desc}</p><div class="row between"><span class="xs muted">в ${usage(k)} шагах</span><span class="row" style="gap:4px">${Object.values(CTX).map((t) => `<span class="chip" style="font-size:10.5px;padding:2px 7px">${t}</span>`).join('')}</span></div></div>`).join('')}
         <div class="card new-card" style="min-height:0" data-act="toast" data-msg="Новые компоненты подключаются без изменения ранее созданных уроков"><div><h3>+ Новый компонент</h3><p class="xs muted">Расширение библиотеки</p></div></div></div>
@@ -1029,7 +1029,7 @@
   function vMedia() {
     const nolic = S.media.filter((x) => /Не указана/.test(x.license)).length;
     const segBtn = (f, v, t) => `<button class="${ui[f] === v ? 'on' : ''}" data-act="mediaFilter" data-f="${f}" data-v="${v}">${t}</button>`;
-    return `<div class="row between wrap" style="margin-bottom:18px;gap:12px;align-items:flex-end"><div><h1>Материалы</h1></div><button class="btn dark lg" data-act="editMedia">${icon('upload', 16)}Загрузить материал</button></div>
+    return `<div class="row between wrap" style="margin-bottom:32px;gap:12px;align-items:flex-end"><div><h1>Материалы</h1></div><button class="btn dark lg" data-act="editMedia">${icon('upload', 16)}Загрузить материал</button></div>
       <div class="grid g4" style="margin-bottom:16px">
         <div class="stat" style="background:#ffffffb3"><b>${S.media.length}</b><span class="xs muted">файлов в хранилище</span></div>
         <div class="stat" style="background:#ffffffb3"><b>${S.media.filter((x) => x.offline).length}</b><span class="xs muted">доступны офлайн</span></div>
@@ -1064,7 +1064,7 @@
     ui.scId = a.id;
     const used = S.methods.filter((m) => m.scenario === a.id);
     const seg = (k, map) => `<div class="seg">${Object.entries(map).map(([v, t]) => `<button class="${a[k] === v ? 'on' : ''}" data-act="setField" data-id="${a.id}" data-k="${k}" data-v="${v}">${Array.isArray(t) ? t[0] : t}</button>`).join('')}</div>`;
-    return `<div class="row between wrap" style="margin-bottom:18px;gap:12px;align-items:flex-end"><div><h1>Возрастные сценарии</h1></div><button class="btn dark lg" data-act="newScenario">${icon('plus', 16)}Новый сценарий</button></div>
+    return `<div class="row between wrap" style="margin-bottom:32px;gap:12px;align-items:flex-end"><div><h1>Возрастные сценарии</h1></div><button class="btn dark lg" data-act="newScenario">${icon('plus', 16)}Новый сценарий</button></div>
       <div class="grid g3" style="margin-bottom:18px">${list.map((x) => `<a class="card flat zone ${x.id === a.id ? 'sel-card' : ''}" href="#scenarios/${x.id}"><div class="row between"><span class="chip ${x.accent}">${esc(x.age)}</span></div><b style="font-size:17px">${esc(x.title)}</b><span class="xs muted">${esc(x.brief || `${UIMODE[x.ui][0]} интерфейс, ${x.progress === 'soft' ? 'прогресс без оценок' : 'оценки'}`)}</span></a>`).join('')}</div>
       <div class="scen-grid">
         <div class="stack">
@@ -1152,7 +1152,7 @@
     if (!S.templates.some((t) => t.id === ui.taskId)) ui.taskId = S.templates[0] ? S.templates[0].id : null;
     const L = tplLesson();
     const t = idx[ui.taskId];
-    return `<div class="row between wrap" style="margin-bottom:18px;gap:12px;align-items:flex-end"><div><h1>Шаблоны заданий</h1></div><button class="btn dark lg" data-act="addTaskModal">${icon('plus', 16)}Новый шаблон</button></div>
+    return `<div class="row between wrap" style="margin-bottom:32px;gap:12px;align-items:flex-end"><div><h1>Шаблоны заданий</h1></div><button class="btn dark lg" data-act="addTaskModal">${icon('plus', 16)}Новый шаблон</button></div>
       <div class="builder hw">
         <div class="card sticky" style="padding:16px"><div class="row between" style="margin-bottom:6px"><h3>Шаблоны</h3><span class="xs muted">${S.templates.length} ${plural(S.templates.length, 'шаблон', 'шаблона', 'шаблонов')}, вставлены ${S.templates.reduce((a, x) => a + (x.uses || 0), 0)} раз</span></div><div data-region="hwlist">${hwListInner(L)}</div></div>
         <div>${t ? taskEditor(L, t) : '<div class="card"><div class="empty">Создайте первый шаблон</div></div>'}</div>
