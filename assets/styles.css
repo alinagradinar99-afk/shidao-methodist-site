@@ -455,3 +455,34 @@ h3 { font-size: 16px; font-weight: 800; margin: 0; }
 .pending-card:hover { transform: translateY(-2px); }
 .pending-card b { font-size: 16px; }
 .pending-card .num-big { background: radial-gradient(circle at 18% 0, #c9ff4f 0, #e9ffb0 80%); display: grid; place-items: center; font-weight: 900; flex: none; }
+
+/* ---------- MVP: материалы урока, шаги, кабинет преподавателя */
+.step-meta { grid-template-columns: 1fr 170px 120px; }
+.tbox-edit { display: grid; gap: 6px; padding: 10px; border-radius: 14px; background: #f2f8ff; border: 1px solid #70b7ff33; }
+.slide-frame { aspect-ratio: 16 / 9; border-radius: 12px; background: linear-gradient(135deg, #fff, #f3f6fb); border: 1px solid #e3e8f2; display: grid; place-items: center; box-shadow: 0 4px 12px #4f8dff14; }
+.slide-frame.big { max-width: 100%; }
+.slide-in { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; color: #33415c; padding: 8px; }
+.cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.mcard { border: 1px solid var(--line-2); border-radius: 16px; padding: 10px; display: flex; flex-direction: column; gap: 6px; background: #fff; }
+.mcard .input { padding: 6px 8px; font-size: 13px; }
+.mcard-pic { height: 64px; border-radius: 12px; background: #f6f8fc; display: grid; place-items: center; }
+.mcard.view { align-items: center; text-align: center; gap: 2px; padding: 10px 6px; }
+.tv-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 8px; }
+.tv-wrap { border-radius: 24px; padding: 18px; background: radial-gradient(circle at 0 0, #f4ffe0 0, #f3f4f8 40%, #f1effa 100%); border: 1px solid #fff; }
+.tv-nav { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 10px 8px 16px; border-radius: 18px; background: #ffffffd9; box-shadow: 0 10px 24px #1414140f; flex-wrap: wrap; }
+.tv-acc { border: 1px solid var(--line-2); border-radius: 14px; padding: 10px 14px; background: #fff; }
+.tv-acc + .tv-acc { margin-top: 8px; }
+.tv-acc summary { cursor: pointer; font-weight: 700; font-size: 14px; display: flex; gap: 8px; align-items: center; list-style: none; }
+.tv-acc summary::-webkit-details-marker { display: none; }
+.tv-acc summary::after { content: "⌄"; margin-left: auto; color: var(--muted); }
+.tv-acc[open] summary::after { content: "⌃"; }
+.tv-acc-b { padding-top: 10px; }
+.tv-step { border: 1px solid var(--line-2); border-radius: 18px; padding: 14px; background: #fff; }
+.tv-step + .tv-step { margin-top: 10px; }
+.tv-box { margin-top: 10px; border-radius: 14px; padding: 10px 14px; background: #fffbea; border: 1px solid #ffe2a3; font-size: 13px; }
+.tv-box ul { margin: 6px 0 0; padding-left: 18px; }
+.tv-hw { border-radius: 16px; padding: 14px; background: linear-gradient(120deg, #f5f0ff, #fff); border: 1px solid #c9b4ff55; }
+.tv-student { margin-top: 10px; display: grid; gap: 8px; }
+.tv-student:empty { display: none; }
+.cover-pick { height: 84px; border-radius: 16px; display: flex; align-items: flex-end; justify-content: space-between; padding: 10px; font-size: 30px; font-weight: 900; }
+@media (max-width: 760px) { .step-meta { grid-template-columns: 1fr 1fr; } .step-meta > :first-child { grid-column: 1 / -1; } }
