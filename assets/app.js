@@ -485,10 +485,6 @@
         <div class="hint-box" style="margin-top:12px">${icon('sparkle', 16)}<span>Нумерация шагов одинакова для преподавателя и ученика. Перетаскивайте, чтобы поменять порядок</span></div>
       </div>
       <div>${s ? stepEditor(L, s) : `<div class="card"><div class="empty">В уроке пока нет шагов. Нажмите «Добавить шаг»</div></div>`}</div>
-      <div class="preview-col sticky">
-        <div class="row between" style="margin-bottom:10px"><span class="eyebrow">Экран ученика</span><a class="btn xs" href="#lesson/${L.id}/preview">${icon('eye', 13)}Предпросмотр</a></div>
-        <div data-region="student">${previewInner(L)}</div>
-      </div>
     </div>`;
   }
   function stepsListInner(L) {
@@ -496,7 +492,6 @@
     const over = total > L.duration;
     const colors = ['#c9ff4f', '#c9b4ff', '#70b7ff', '#ffb6e8', '#ffd23f'];
     return `<div class="row between" style="margin-bottom:8px"><h3>Шаги урока</h3><span class="xs ${over ? '' : 'muted'}" style="${over ? 'color:var(--danger);font-weight:700' : ''}">${total} / ${L.duration} мин</span></div>
-      <div class="time-bar" style="margin-bottom:12px">${L.steps.map((s, i) => `<i style="width:${(100 * (+s.duration || 0)) / Math.max(total, L.duration)}%;background:${colors[i % colors.length]}" title="${esc(s.title)}"></i>`).join('')}</div>
       <div class="steps-list">
         ${L.steps.map((s, i) => `<div class="step-item ${s.id === ui.stepId ? 'on' : ''}" draggable="true" data-drag="step" data-drag-id="${s.id}" data-drop="step" data-before="${s.id}" data-act="selStep" data-id="${s.id}">
           <span class="step-n">${i + 1}</span>
@@ -657,10 +652,6 @@
         <button class="btn sm dark" style="width:100%;margin-top:10px" data-act="addTaskModal">${icon('plus', 14)}Добавить задание</button>
       </div>
       <div>${t ? taskEditor(L, t) : hwSettings(L)}</div>
-      <div class="preview-col sticky">
-        <div class="row between" style="margin-bottom:10px"><span class="eyebrow">Как увидит ученик</span><button class="btn xs" data-act="kidReset">${icon('refresh', 12)}Сбросить ответы</button></div>
-        <div data-region="kid">${kidInner(L)}</div>
-      </div>
     </div>`;
   }
   function hwListInner(L) {
@@ -1126,7 +1117,6 @@
       <div class="builder hw">
         <div class="card sticky" style="padding:16px"><div class="row between" style="margin-bottom:6px"><h3>Шаблоны</h3><span class="xs muted">${S.templates.length} ${plural(S.templates.length, 'шаблон', 'шаблона', 'шаблонов')}, вставлены ${S.templates.reduce((a, x) => a + (x.uses || 0), 0)} раз</span></div><div data-region="hwlist">${hwListInner(L)}</div></div>
         <div>${t ? taskEditor(L, t) : '<div class="card"><div class="empty">Создайте первый шаблон</div></div>'}</div>
-        <div class="preview-col sticky"><div class="row between" style="margin-bottom:10px"><span class="eyebrow">Как увидит ученик</span><button class="btn xs" data-act="kidReset">${icon('refresh', 12)}Сбросить ответы</button></div><div data-region="kid">${t ? kidInner(L) : ''}</div></div>
       </div>
       <div class="row between" style="margin:32px 0 14px"><h2>Шаблоны обратной связи</h2><button class="btn sm" data-act="addFeedback">${icon('plus', 14)}Шаблон</button></div>
       <div class="grid g4">${S.feedback.map((f) => `<div class="card flat stack-s"><div class="row"><input class="input bare grow" style="font-weight:800" data-id="${f.id}" data-k="t" value="${esc(f.t)}"><button class="btn icon ghost danger" data-act="del" data-id="${f.id}">${icon('trash', 13)}</button></div><textarea class="textarea" style="min-height:90px" data-id="${f.id}" data-k="x">${esc(f.x)}</textarea></div>`).join('')}</div>`;

@@ -220,8 +220,8 @@ h3 { font-size: 16px; font-weight: 800; margin: 0; }
 /* ---------- Конструктор урока */
 .lesson-head { display: flex; gap: 20px; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; }
 .lesson-head .num-big { width: 64px; height: 64px; border-radius: 20px; background: radial-gradient(circle at 18% 0, #c9ff4f 0, #e9ffb0 80%); display: grid; place-items: center; font-weight: 900; font-size: 26px; flex: none; }
-.builder { display: grid; grid-template-columns: 290px minmax(0, 1fr) 400px; gap: 16px; align-items: start; }
-.builder.hw { grid-template-columns: 300px minmax(0, 1fr) 360px; }
+.builder { display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 16px; align-items: start; }
+.builder.hw { grid-template-columns: 300px minmax(0, 1fr); }
 .sticky { position: sticky; top: 96px; }
 .steps-list { max-height: calc(100vh - 230px); overflow: auto; padding: 4px; margin: -4px; }
 .step-item {
