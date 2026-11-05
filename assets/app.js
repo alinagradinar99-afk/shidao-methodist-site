@@ -1054,8 +1054,34 @@
     plan: ['Персональный учебный план', 'Индивидуальная траектория'],
   };
   const UIMODE = { game: ['Игровой', 'Крупные элементы, минимум текста, аудио и картинки'], school: ['Школьный', 'Уроки, задания, тесты, расписание, прогресс'], teen: ['Продвинутый', 'Аналитика, HSK, словарь, диалоги, личный план'] };
-  const AIMODE = { safe: ['Child Safety Mode', 'Только разрешённые учебные сценарии, без свободного чата, без запроса личных данных и внешних ссылок'], helper: ['Учебный помощник', 'Объяснить слово или задание, повторение, мини-викторины'], extended: ['Расширенный', 'Тематические диалоги, разбор ошибок, персональный план'] };
+  const AIMODE = { safe: ['Безопасный режим', 'Только разрешённые учебные сценарии, без свободного чата, без запроса личных данных и внешних ссылок'], helper: ['Учебный помощник', 'Объяснить слово или задание, повторение, мини-викторины'], extended: ['Расширенный', 'Тематические диалоги, разбор ошибок, персональный план'] };
   const READING = { none: 'Без самостоятельного чтения', pinyin: 'Иероглифы + пиньинь', full: 'Иероглифы, пиньинь по запросу' };
+
+  const BAO = { safe: ['Давай повторим цвета! Найди 红色, красный.', 'Отвечает только по заданиям урока'], helper: ['Не получается? Подскажу, как пишется 你. Попробуешь сам?', 'Объясняет и даёт подсказки'], extended: ['Ты в кафе. Закажи чай: 我要一杯茶!', 'Ведёт диалог и разбирает ошибки'] };
+  const baoSvg = (sz = 120) => `<svg class="bao" width="${sz}" height="${sz}" viewBox="0 0 120 120" aria-label="Панда Бао">
+    <circle cx="60" cy="62" r="54" fill="#c9b4ff" opacity=".45"/>
+    <ellipse cx="60" cy="100" rx="30" ry="18" fill="#fff"/>
+    <path d="M33 92 Q60 108 87 92 L84 100 Q60 114 36 100 Z" fill="#c9ff4f"/>
+    <path d="M78 98 l12 14 l4 -8 z" fill="#c9ff4f"/>
+    <circle cx="33" cy="34" r="12" fill="#2b2b36"/><circle cx="87" cy="34" r="12" fill="#2b2b36"/>
+    <circle cx="33" cy="34" r="5" fill="#ffb6e8"/><circle cx="87" cy="34" r="5" fill="#ffb6e8"/>
+    <ellipse cx="60" cy="60" rx="36" ry="32" fill="#fff"/>
+    <ellipse cx="46" cy="58" rx="8.5" ry="10.5" transform="rotate(-18 46 58)" fill="#2b2b36"/>
+    <ellipse cx="74" cy="58" rx="8.5" ry="10.5" transform="rotate(18 74 58)" fill="#2b2b36"/>
+    <circle cx="47.5" cy="57" r="3.4" fill="#fff"/><circle cx="72.5" cy="57" r="3.4" fill="#fff"/>
+    <circle cx="48.6" cy="55.8" r="1.2" fill="#2b2b36"/><circle cx="71.4" cy="55.8" r="1.2" fill="#2b2b36"/>
+    <ellipse cx="60" cy="69" rx="4.2" ry="3" fill="#2b2b36"/>
+    <path d="M55 74 Q60 79 65 74" stroke="#2b2b36" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+    <ellipse cx="38" cy="72" rx="6" ry="3.8" fill="#ffb6e8" opacity=".8"/><ellipse cx="82" cy="72" rx="6" ry="3.8" fill="#ffb6e8" opacity=".8"/>
+    <path d="M60 28 C58 18 64 10 74 9 C72 18 68 25 60 28 Z" fill="#c9ff4f" stroke="#9ad02a" stroke-width="1"/>
+    <path d="M60 28 L69 13" stroke="#9ad02a" stroke-width="1"/>
+    <circle cx="96" cy="88" r="9" fill="#ffb6e8"/><rect x="92" y="77" width="8" height="3" rx="1.5" fill="#2b2b36"/><path d="M96 97 v6" stroke="#2b2b36" stroke-width="1.6"/>
+    <text x="96" y="91.5" font-size="8" text-anchor="middle" fill="#2b2b36" font-weight="700">福</text>
+  </svg>`;
+  const aiBuddy = (mode) => `<div class="bao-card"><div class="bao-pic">${baoSvg(116)}</div><div class="grow stack-s">
+    <div class="row wrap" style="gap:8px"><b style="font-size:17px">Панда Бао</b><span class="zh muted small">宝宝</span><span class="chip">${AIMODE[mode][0]}</span></div>
+    <div class="bao-bubble">${esc(BAO[mode][0])}</div>
+    <div class="xs muted">${BAO[mode][1]}. ${AIMODE[mode][1]}.</div></div></div>`;
 
   function vScenarios(sid) {
     const list = S.scenarios;
@@ -1065,8 +1091,8 @@
     const used = S.methods.filter((m) => m.scenario === a.id);
     const seg = (k, map) => `<div class="seg">${Object.entries(map).map(([v, t]) => `<button class="${a[k] === v ? 'on' : ''}" data-act="setField" data-id="${a.id}" data-k="${k}" data-v="${v}">${Array.isArray(t) ? t[0] : t}</button>`).join('')}</div>`;
     return `<div class="row between wrap" style="margin-bottom:32px;gap:12px;align-items:flex-end"><div><h1>Возрастные сценарии</h1></div><button class="btn dark lg" data-act="newScenario">${icon('plus', 16)}Новый сценарий</button></div>
-      <div class="grid g3" style="margin-bottom:18px">${list.map((x) => `<a class="card flat zone ${x.id === a.id ? 'sel-card' : ''}" href="#scenarios/${x.id}"><div class="row between"><span class="chip ${x.accent}">${esc(x.age)}</span></div><b style="font-size:17px">${esc(x.title)}</b><span class="xs muted">${esc(x.brief || `${UIMODE[x.ui][0]} интерфейс, ${x.progress === 'soft' ? 'прогресс без оценок' : 'оценки'}`)}</span></a>`).join('')}</div>
-      <div class="scen-grid">
+      <div class="grid g3" style="margin-bottom:18px">${list.map((x) => `<a class="card flat zone ${x.id === a.id ? 'sel-card' : ''}" href="#scenarios/${x.id}"><div class="row between"><span class="chip ${x.accent}">${esc(x.age)}</span></div><b style="font-size:17px">${esc(x.title)}</b></a>`).join('')}</div>
+      <div class="scen-grid single">
         <div class="stack">
           <div class="card stack">
             <div class="row" style="gap:10px"><input class="input bare title grow" data-id="${a.id}" data-k="title" value="${esc(a.title)}">${used.length ? '' : `<button class="btn icon ghost danger" data-act="confirmDel" data-id="${a.id}" data-what="сценарий">${icon('trash', 15)}</button>`}</div>
@@ -1096,49 +1122,11 @@
           <div class="card stack">
             <div class="card-h" style="margin:0"><h3>Режим ИИ-ассистента</h3><span class="chip purple">Этап 2</span></div>
             ${seg('ai', AIMODE)}
-            <div class="hint-box">${icon('sparkle', 16)}<span>${AIMODE[a.ai][1]}</span></div>
+            ${aiBuddy(a.ai)}
           </div>
+          <div class="card"><div class="card-h"><h3>Используется в программах</h3></div>${used.length ? used.map((m) => `<a class="todo" href="#method/${m.id}"><span class="grow small"><b>${esc(m.title)}</b></span>${statusChip(m.status)}</a>`).join('') : '<div class="empty">Пока не назначен программам</div>'}</div>
         </div>
-        <aside class="sticky">
-          <div class="eyebrow" style="margin-bottom:10px">Кабинет ученика, предпросмотр</div>
-          <div data-region="scprev">${scenarioPreview(a)}</div>
-          <div class="card" style="margin-top:14px;padding:16px"><h3 style="margin-bottom:8px">Используется в программах</h3>${used.length ? used.map((m) => `<a class="todo" href="#method/${m.id}"><span class="grow small"><b>${esc(m.title)}</b></span>${statusChip(m.status)}</a>`).join('') : '<div class="empty">Пока не назначен программам</div>'}</div>
-        </aside>
       </div>`;
-  }
-
-  function scenarioPreview(a) {
-    if (!a) return '';
-    const on = (k) => a.modules[k];
-    const hz = { M: 20, L: 28, XL: 38 }[a.font] || 28;
-    const tile = (ic, t, sub) => `<div class="s-block" style="padding:10px"><div class="row" style="gap:8px">${icon(ic, 18)}<b class="xs">${t}</b></div>${sub ? `<div class="xs muted" style="margin-top:4px">${sub}</div>` : ''}</div>`;
-    const progress = a.progress === 'soft'
-      ? `<div class="s-block"><div class="s-title">Как у меня получается</div><div class="row wrap" style="gap:4px">${a.softLabels.map((t, i) => `<span class="chip ${i === 1 ? 'green' : ''}" style="font-size:10.5px">${esc(t)}</span>`).join('')}</div></div>`
-      : `<div class="s-block"><div class="s-title">Оценки</div><div class="row" style="gap:6px">${['5', '5', '4', '5'].map((x) => `<span class="chip" style="background:#eef5ff">${x}</span>`).join('')}</div></div>`;
-    let body = '';
-    if (a.ui === 'game') {
-      body = `<div class="s-scene" style="min-height:110px;justify-content:space-between;align-items:center"><span class="hero-char long zh" style="width:54px;height:54px;font-size:24px">龙</span><div class="bubble zh" style="font-size:${hz * 0.6}px">你好！</div><span class="hero-char mei zh" style="width:54px;height:54px;font-size:24px">妹</span></div>
-        <button class="kid-btn lime" style="font-size:18px;padding:16px">${icon('play', 16)} Урок 4</button>
-        <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:8px">${[['music', 'Песни'], ['film', 'Мультики'], ['game', 'Игры']].map(([i, t]) => `<div class="s-block" style="text-align:center;padding:12px 4px">${icon(i, 26)}<div class="xs" style="font-weight:800;margin-top:4px">${t}</div></div>`).join('')}</div>
-        ${on('parent') ? tile('heart', 'Задание с мамой или папой') : ''}
-        ${on('gamification') ? `<div class="row" style="justify-content:center;gap:4px;font-size:22px">⭐⭐⭐<span style="opacity:.25">⭐⭐</span></div>` : ''}${progress}`;
-    } else if (a.ui === 'school') {
-      body = `<div><b>Привет, Миша!</b><div class="xs muted">Сегодня урок в 16:00</div></div>
-        <div class="s-block" style="background:#141414;color:#fff"><div class="xs" style="opacity:.7">Следующий урок</div><b>Приветствие и знакомство</b><div class="zh" style="font-size:${hz}px;font-weight:900">你好</div></div>
-        ${tile('send', 'Домашнее задание', '2 задания, до пятницы')}
-        <div class="grid g2" style="gap:8px">${on('hanzi') ? tile('pen', 'Иероглифы') : ''}${on('pron') ? tile('mic', 'Произношение') : ''}${on('srs') ? tile('cards', 'Карточки') : ''}${on('dialog') ? tile('users', 'Диалоги') : ''}</div>
-        ${on('gamification') ? `<div class="s-block"><div class="row between xs"><b>Уровень 3, 240 XP</b><span>🔥 5 дней</span></div><div class="meter" style="margin-top:6px"><i style="width:60%;background:#c9ff4f"></i></div></div>` : ''}${progress}`;
-    } else {
-      body = `<div><b>Привет, Аня!</b><div class="xs muted">План на неделю: 4 из 6 целей</div></div>
-        ${on('hsk') ? `<div class="s-block"><div class="s-title">Готовность к HSK 2</div>${[['Аудирование', 72], ['Чтение', 58], ['Лексика', 81]].map(([t, v]) => `<div class="xs" style="margin-top:6px">${t}, ${v}%</div><div class="meter"><i style="width:${v}%"></i></div>`).join('')}</div>` : ''}
-        <div class="grid g2" style="gap:8px">${on('srs') ? tile('cards', 'Словарь', '214 слов, 30 на сегодня') : ''}${on('dialog') ? tile('users', 'Диалоги', 'В кафе, 6 реплик') : ''}${on('pron') ? tile('mic', 'Произношение', 'тоны 86%') : ''}${on('plan') ? tile('flag', 'Мой план', '3 темы') : ''}</div>
-        ${on('analytics') ? tile('layers', 'Аналитика', 'Сложнее всего: 3-й тон, 把') : ''}${progress}`;
-    }
-    return `<div class="screen-frame" style="max-width:340px;margin:0 auto;border-radius:30px;padding:10px"><div class="screen phone">
-      <div class="screen-head"><span>${esc(a.title)}, ${esc(a.age)}</span><span>${UIMODE[a.ui][0]}</span></div>
-      <div class="screen-body" style="font-size:${a.font === 'XL' ? 15 : 13}px">${body}
-        <div class="row" style="gap:6px;margin-top:auto"><span class="block-ico" style="background:#c9b4ff59;width:26px;height:26px">${icon('bot', 13)}</span><span class="xs muted">ИИ: ${AIMODE[a.ai][0]}</span></div>
-      </div></div></div>`;
   }
 
   // ---------------------------------------------------------------- Шаблоны заданий
@@ -1184,7 +1172,6 @@
     student: () => previewInner(curLesson()),
     hwlist: () => hwListInner(curLesson()),
     kid: () => kidInner(curLesson()),
-    scprev: () => scenarioPreview(idx[ui.scId]),
     mlist: () => mediaListInner(),
   };
 
@@ -1497,8 +1484,8 @@
     if (el.dataset.tb) { const st = idx[el.dataset.tb]; st.tbox = st.tbox || { title: '', items: '' }; st.tbox[el.dataset.f] = el.value; save(); return; }
     if (el.dataset.ti) { const m = idx[el.dataset.ti]; m.teacherInfo = m.teacherInfo || {}; m.teacherInfo[el.dataset.k] = el.value; save(); return; }
     if (el.dataset.pres) { const pr = curLesson().materials.presentation; pr[el.dataset.pres] = el.dataset.pres === 'slides' ? Number(el.value) || 0 : el.value; save(); return; }
-    if (el.dataset.sl) { idx[el.dataset.sl].softLabels[+el.dataset.i] = el.value; save(); refresh(['scprev']); return; }
-    if (el.dataset.modk) { idx[el.dataset.modk].modules[el.dataset.m] = el.checked; save(); refresh(['scprev']); return; }
+    if (el.dataset.sl) { idx[el.dataset.sl].softLabels[+el.dataset.i] = el.value; save(); return; }
+    if (el.dataset.modk) { idx[el.dataset.modk].modules[el.dataset.m] = el.checked; save(); return; }
     if (el.id === 'mq') { ui.mQ = el.value; refresh(['mlist']); return; }
     const { id, k } = el.dataset;
     if (!id || !k || !idx[id]) return;
