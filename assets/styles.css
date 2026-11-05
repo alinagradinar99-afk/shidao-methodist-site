@@ -193,7 +193,7 @@ h3 { font-size: 16px; font-weight: 800; margin: 0; }
 .level { padding: 18px; }
 .level + .level { margin-top: 16px; }
 .level-h { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
-.level-num { width: 36px; height: 36px; border-radius: 12px; background: #141414; color: #fff; font-weight: 900; display: grid; place-items: center; flex: none; }
+.level-num { width: 36px; height: 36px; border-radius: 12px; background: #c9ff4f66; color: var(--foreground); font-weight: 700; display: grid; place-items: center; flex: none; }
 .module { background: var(--soft); border-radius: 18px; padding: 12px; }
 .module + .module { margin-top: 10px; }
 .module-h { display: flex; align-items: center; gap: 8px; padding: 2px 4px 10px; }
