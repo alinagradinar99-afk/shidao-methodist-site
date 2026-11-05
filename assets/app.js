@@ -332,15 +332,13 @@
         <input class="input bare title" style="font-size:36px;font-weight:900;letter-spacing:-.03em" data-id="${m.id}" data-k="title" value="${esc(m.title)}">
       </div>
       <div class="row wrap">
-        <button class="btn" data-act="teacherProgram" data-id="${m.id}">${icon('eye', 15)}Как видит преподаватель</button>
+        <button class="btn" data-act="teacherProgram" data-id="${m.id}">${icon('eye', 15)}Предпросмотр</button>
         <button class="btn" data-act="versions" data-id="${m.id}">${icon('history', 15)}Версии</button>
         <button class="btn" data-act="assign" data-id="${m.id}">${icon('assign', 15)}Назначить</button>
         <button class="btn dark" data-act="publish" data-id="${m.id}">${icon('send', 15)}Опубликовать v${nextVersion(m.version)}</button>
       </div>
     </div>
-    <div class="grid g6" style="margin:32px 0 20px">
-      ${[[m.levels.length, 'уровней'], [modules, 'модулей'], [ls.length, 'уроков'], [steps, 'шагов'], [tasks, 'заданий ДЗ'], [`${Math.round(ls.reduce((a, l) => a + (+l.duration || 0), 0) / 6) / 10} ч`, 'учебного времени']].map(([v, t]) => `<div class="stat" style="background:#ffffffb3"><b>${v}</b><span class="xs muted">${t}</span></div>`).join('')}
-    </div>
+    <div class="prog-stats">${[['layers', m.levels.length, ['уровень', 'уровня', 'уровней']], ['folder', modules, ['модуль', 'модуля', 'модулей']], ['book', ls.length, ['урок', 'урока', 'уроков']], ['list', steps, ['шаг', 'шага', 'шагов']], ['send', tasks, ['задание ДЗ', 'задания ДЗ', 'заданий ДЗ']]].map(([ic, v, f]) => `<span>${icon(ic, 14)}<b>${v}</b> ${plural(v, ...f)}</span>`).join('')}<span>${icon('clock', 14)}<b>${String(Math.round(ls.reduce((a, l) => a + (+l.duration || 0), 0) / 6) / 10).replace('.', ',')} ч</b> учебного времени</span></div>
     <div class="program">
       <div>
         <div class="row between" style="margin-bottom:12px"><h2>Программа курса</h2><span class="xs muted">${icon('grip', 12)} Перетаскивайте уроки между модулями</span></div>
@@ -398,7 +396,7 @@
     return `<div class="lesson-row" draggable="true" data-drag="lesson" data-drag-id="${L.id}" data-drop="lesson" data-mod="${mod}" data-before="${L.id}" data-act="openLesson" data-id="${L.id}">
       <span class="handle">${icon('grip', 14)}</span>
       <span class="num ${L.reference ? 'cover-green' : ''}">${n}</span>
-      <div style="min-width:0"><div class="row" style="gap:8px"><b style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(L.title)}</b>${L.reference ? '<span class="chip green xs">эталон</span>' : ''}</div>
+      <div style="min-width:0"><div class="row" style="gap:8px;margin-bottom:6px"><b style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(L.title)}</b>${L.reference ? '<span class="chip green xs">эталон</span>' : ''}</div>
         <div class="meta"><span>${icon('list', 12)}${L.steps.length} ${plural(L.steps.length, 'шаг', 'шага', 'шагов')}</span><span>${icon('send', 12)}ДЗ: ${L.hw.tasks.length}</span><span>${icon('clock', 12)}${mins}/${L.duration} мин</span><span>${icon('book', 12)}${L.vocab.filter((w) => w.kind !== 'phrase').length} слов, ${L.vocab.filter((w) => w.kind === 'phrase').length} фраз</span></div></div>
       ${statusChip(L.status)}
       <div class="row row-actions" style="gap:2px"><button class="btn icon ghost" data-act="dupLesson" data-id="${L.id}" title="Дублировать">${icon('copy', 14)}</button><button class="btn icon ghost danger" data-act="confirmDel" data-id="${L.id}" data-what="урок" title="Удалить">${icon('trash', 14)}</button></div>

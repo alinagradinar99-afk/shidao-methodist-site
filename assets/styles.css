@@ -204,7 +204,7 @@ h3 { font-size: 16px; font-weight: 800; margin: 0; }
 .lesson-row + .lesson-row { margin-top: 6px; }
 .lesson-row:hover { border-color: #14141420; }
 .lesson-row.dragging { opacity: .4; }
-.lesson-row .num { width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center; font-weight: 900; font-size: 15px; background: #f1f1f4; }
+.lesson-row .num { width: 36px; height: 36px; border-radius: 11px; display: grid; place-items: center; font-weight: 600; font-size: 13px; color: var(--text-2); background: transparent; border: 1px solid var(--line-2); }
 .lesson-row .meta { display: flex; gap: 12px; color: var(--text-2); font-size: 12px; flex-wrap: wrap; }
 .lesson-row .meta span { display: inline-flex; gap: 4px; align-items: center; }
 .handle { color: #b8bac3; cursor: grab; display: grid; place-items: center; }
@@ -493,3 +493,7 @@ h3 { font-size: 16px; font-weight: 800; margin: 0; }
 .bao-pic .bao { display: block; }
 .bao-bubble { position: relative; align-self: flex-start; background: #fff; border-radius: 16px 16px 16px 4px; padding: 10px 14px; font-weight: 600; font-size: 14px; box-shadow: 0 6px 18px #1414140f; }
 @media (max-width: 560px) { .bao-card { flex-direction: column; align-items: flex-start; } }
+
+.prog-stats { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 28px 0 22px; font-size: 13.5px; color: var(--text-2); }
+.prog-stats span { display: inline-flex; align-items: center; gap: 6px; }
+.prog-stats b { color: var(--foreground); font-weight: 700; }
