@@ -362,7 +362,7 @@
             <a class="xs" href="#scenarios/${m.scenario || ''}"><u>Открыть настройки сценария</u></a>
             <label class="field"><span>Формат</span><input class="input" data-id="${m.id}" data-k="format" value="${esc(m.format)}"></label>
             <label class="field"><span>Описание</span><textarea class="textarea" data-id="${m.id}" data-k="description">${esc(m.description)}</textarea></label>
-            <div class="hint-box">${icon('sparkle', 16)}<span>Возрастной сценарий определяет интерфейс ученика, модель прогресса (мягкая / оценки) и режим ИИ.</span></div>
+            <div class="hint-box">${icon('sparkle', 16)}<span>Возрастной сценарий определяет интерфейс ученика, модель прогресса (мягкая / оценки) и режим ИИ</span></div>
           </div>
         </div>
         <div class="card">
@@ -371,7 +371,7 @@
         </div>
         <div class="card">
           <div class="card-h"><h3>Назначена</h3><button class="btn xs" data-act="assign" data-id="${m.id}">Изменить</button></div>
-          ${m.assigned.length ? `<div class="stack-s">${S.orgs.map((o) => { const gs = o.groups.filter((g) => m.assigned.includes(g.id)); if (!gs.length && !m.assigned.includes(o.id)) return ''; return `<div class="small"><b>${esc(o.title)}</b><div class="xs muted">${gs.map((g) => esc(g.title)).join(', ') || 'вся организация'}</div></div>`; }).join('')}</div>` : '<div class="empty">Не назначена. Опубликуйте и назначьте организациям или группам.</div>'}
+          ${m.assigned.length ? `<div class="stack-s">${S.orgs.map((o) => { const gs = o.groups.filter((g) => m.assigned.includes(g.id)); if (!gs.length && !m.assigned.includes(o.id)) return ''; return `<div class="small"><b>${esc(o.title)}</b><div class="xs muted">${gs.map((g) => esc(g.title)).join(', ') || 'вся организация'}</div></div>`; }).join('')}</div>` : '<div class="empty">Не назначена. Опубликуйте и назначьте организациям или группам</div>'}
         </div>
         <div class="card">
           <div class="card-h"><h3>История версий</h3><button class="btn xs" data-act="versions" data-id="${m.id}">Все</button></div>
@@ -426,7 +426,7 @@
         ${L.status === 'published' ? `<button class="btn lime" data-act="toReview" data-id="${L.id}">${icon('check', 15)}Опубликован</button>` : `<button class="btn dark" data-act="toReview" data-id="${L.id}">${icon('send', 15)}${L.status === 'review' ? 'Опубликовать урок' : 'Отправить на проверку'}</button>`}
       </div>
     </div>
-    ${L.reference ? `<div class="ref-banner">${icon('flag', 18)}<span><b>Эталон приёмки конструктора.</b> Урок № ${n} «${esc(L.title)}»: ${L.steps.length} шагов собраны только из компонентов библиотеки, без вёрстки. Проверьте его в предпросмотре: кабинет преподавателя и двухэкранный режим.</span></div>` : ''}
+    ${L.reference ? `<div class="ref-banner">${icon('flag', 18)}<span><b>Эталон приёмки конструктора.</b> Урок № ${n} «${esc(L.title)}»: ${L.steps.length} шагов собраны только из компонентов библиотеки, без вёрстки. Проверьте его в предпросмотре: кабинет преподавателя и двухэкранный режим</span></div>` : ''}
     <div class="tabs">${tabs.map(([k, t, ic, c]) => `<a class="tab ${tab === k ? 'on' : ''}" href="#lesson/${L.id}/${k}">${icon(ic, 15)}${t}${c != null ? `<span class="count">${c}</span>` : ''}</a>`).join('')}</div>
     ${body(L)}`;
   }
@@ -478,9 +478,9 @@
       <div class="card sticky" style="padding:16px">
         <div data-region="steps">${stepsListInner(L)}</div>
         <button class="btn sm" style="width:100%;margin-top:10px" data-act="addStep">${icon('plus', 14)}Добавить шаг</button>
-        <div class="hint-box" style="margin-top:12px">${icon('sparkle', 16)}<span>Нумерация шагов одинакова для преподавателя и ученика. Перетаскивайте, чтобы поменять порядок.</span></div>
+        <div class="hint-box" style="margin-top:12px">${icon('sparkle', 16)}<span>Нумерация шагов одинакова для преподавателя и ученика. Перетаскивайте, чтобы поменять порядок</span></div>
       </div>
-      <div>${s ? stepEditor(L, s) : `<div class="card"><div class="empty">В уроке пока нет шагов. Нажмите «Добавить шаг».</div></div>`}</div>
+      <div>${s ? stepEditor(L, s) : `<div class="card"><div class="empty">В уроке пока нет шагов. Нажмите «Добавить шаг»</div></div>`}</div>
       <div class="preview-col sticky">
         <div class="row between" style="margin-bottom:10px"><span class="eyebrow">Экран ученика</span><a class="btn xs" href="#lesson/${L.id}/preview">${icon('eye', 13)}Предпросмотр</a></div>
         <div data-region="student">${previewInner(L)}</div>
@@ -597,7 +597,7 @@
     const s = idx[ui.stepId];
     if (!s) return '<div class="empty">Нет шага</div>';
     return `<div class="screen-frame"><div class="bezel-top"><span>Проектор, 16:10</span><span>● трансляция</span></div>${studentScreen(L, s, {})}</div>
-      <div class="screen-note">${icon('eye', 14)}<span>Сценарий, ответы, переводы и заметки преподавателя на экран ученика не выводятся.</span></div>
+      <div class="screen-note">${icon('eye', 14)}<span>Сценарий, ответы, переводы и заметки преподавателя на экран ученика не выводятся</span></div>
       <div class="card soft" style="margin-top:12px;padding:14px">
         <div class="eyebrow" style="margin-bottom:8px">План преподавателя, кратко</div>
         <div class="small" style="white-space:pre-wrap">${esc(s.script) || '<span class="muted">Сценарий не заполнен</span>'}</div>
@@ -706,7 +706,7 @@
         <label class="field"><span>Баллы</span><input class="input" type="number" min="0" data-type="num" data-id="${t.id}" data-k="points" value="${t.points}"></label>
         <label class="field"><span>Подсказка (открытие фиксируется)</span><input class="input" data-id="${t.id}" data-k="hint" data-live="kid" value="${esc(t.hint)}" placeholder="Показывается по кнопке «Подсказка»"></label>
       </div>
-      <div class="hint-box">${icon('sparkle', 16)}<span>${meta.check === 'auto' ? 'Мгновенная обратная связь: при ошибке ученик видит правильный ответ. Ошибочные слова попадают в блок «Ошибки и повторение».' : 'Работа уходит преподавателю на проверку. На Этапе 2 ИИ подготовит предварительный анализ, итог утверждает преподаватель.'} События (старт, подсказка, ошибка, пропуск) пишутся в диагностический профиль.</span></div>
+      <div class="hint-box">${icon('sparkle', 16)}<span>${meta.check === 'auto' ? 'Мгновенная обратная связь: при ошибке ученик видит правильный ответ. Ошибочные слова попадают в блок «Ошибки и повторение»' : 'Работа уходит преподавателю на проверку. На Этапе 2 ИИ подготовит предварительный анализ, итог утверждает преподаватель'} События (старт, подсказка, ошибка, пропуск) пишутся в диагностический профиль</span></div>
     </div>`;
   }
   function optRows(t) {
@@ -724,9 +724,9 @@
       case 'pron': return `<div class="grid g2"><label class="field"><span>Эталонная фраза</span><input class="input zh" data-id="${t.id}" data-k="zh" data-live="kid" value="${esc(t.zh)}"></label><label class="field"><span>Пиньинь (тоны)</span><input class="input" data-id="${t.id}" data-k="py" data-live="kid" value="${esc(t.py)}"></label></div>
         <div class="row wrap"><button class="btn sm" data-act="fakeUpload" data-what="эталонное аудио">${icon('upload', 14)}Эталонное аудио</button><span class="chip">Проверяет преподаватель</span><span class="chip yellow">Автооценка тонов — после MVP</span></div>`;
       case 'hanzi': return `<label class="field"><span>Иероглиф</span><input class="input zh" style="font-size:28px;width:90px;text-align:center" data-id="${t.id}" data-k="zh" data-live="kid" value="${esc(t.zh)}"></label><div class="row wrap"><span class="chip">Режим: обводка по контуру</span><span class="chip">Проверка порядка и направления черт</span></div>`;
-      case 'cards': return `<div class="field"><span>Слова из лексики урока</span><div class="props">${L.vocab.map((w) => `<span class="prop ${t.words.includes(w.zh) ? 'on' : ''}" data-act="toggleCardWord" data-id="${t.id}" data-w="${esc(w.zh)}"><span class="zh">${esc(w.zh)}</span>, ${esc(w.ru)}</span>`).join('')}</div><div class="xs muted" style="margin-top:6px">Форматы карточек: иероглиф → перевод, аудио → слово. Слова попадут в SRS ученика.</div></div>`;
+      case 'cards': return `<div class="field"><span>Слова из лексики урока</span><div class="props">${L.vocab.map((w) => `<span class="prop ${t.words.includes(w.zh) ? 'on' : ''}" data-act="toggleCardWord" data-id="${t.id}" data-w="${esc(w.zh)}"><span class="zh">${esc(w.zh)}</span>, ${esc(w.ru)}</span>`).join('')}</div><div class="xs muted" style="margin-top:6px">Форматы карточек: иероглиф → перевод, аудио → слово. Слова попадут в SRS ученика</div></div>`;
       case 'text': return `<label class="field"><span>Эталонный ответ (для преподавателя)</span><input class="input" data-id="${t.id}" data-k="answer" value="${esc(t.answer)}"></label>`;
-      case 'ai': return '<div class="empty">Задание будет сформировано ИИ-ассистентом в рамках утверждённой программы (Этап 2).</div>';
+      case 'ai': return '<div class="empty">Задание будет сформировано ИИ-ассистентом в рамках утверждённой программы (Этап 2)</div>';
       default: return `<label class="field"><span>Критерии проверки для преподавателя</span><textarea class="textarea" style="min-height:60px" data-id="${t.id}" data-k="criteria">${esc(t.criteria)}</textarea></label>${['photo', 'file', 'video', 'presentation'].includes(t.type) ? `<button class="btn sm" data-act="fakeUpload" data-what="пример / материал">${icon('upload', 14)}Пример выполнения</button>` : ''}`;
     }
   }
@@ -751,7 +751,7 @@
   function kidTask(L, t) {
     const st = ui.kid[t.id] || (ui.kid[t.id] = {});
     const fb = (ok, text) => `<div class="kid-feedback ${ok ? 'ok' : 'no'}">${text}</div>`;
-    if (st.skipped) return fb(false, 'Задание пропущено — статус «не пройдено», слово уйдёт в повторение.');
+    if (st.skipped) return fb(false, 'Задание пропущено — статус «не пройдено», слово уйдёт в повторение');
     switch (t.type) {
       case 'choice':
       case 'audio': {
@@ -794,7 +794,7 @@
         return `<div class="s-block" style="text-align:center"><div class="zh" style="font-size:26px;font-weight:900">${esc(t.zh)}</div><div class="xs" style="color:#4f5b75">${esc(t.py)}</div><button class="btn xs" style="margin-top:6px" data-act="kidPlay">${icon('play', 11)} эталон</button></div>
           <button class="mic ${st.rec ? 'rec' : ''}" data-act="kidMic" data-t="${t.id}">${icon(st.rec ? 'pause' : 'mic', 26)}</button>
           <div class="xs muted" style="text-align:center">${st.rec ? 'Идёт запись… нажми, чтобы остановить' : st.ok ? 'Попытка 1 сохранена' : 'Нажми и скажи фразу'}</div>
-          ${st.ok ? fb(true, 'Запись отправлена учителю — он послушает и оставит комментарий.') : ''}`;
+          ${st.ok ? fb(true, 'Запись отправлена учителю — он послушает и оставит комментарий') : ''}`;
       case 'hanzi':
         return `<div style="aspect-ratio:1;max-width:180px;margin:0 auto;border-radius:16px;background:#fff;border:2px solid #e4eaf5;display:grid;place-items:center;position:relative;background-image:linear-gradient(#eef2f9 1px,transparent 1px),linear-gradient(90deg,#eef2f9 1px,transparent 1px);background-size:50% 50%"><span class="zh" style="font-size:110px;color:${st.ok ? '#141414' : '#dfe5ef'};font-weight:400;line-height:1">${esc(t.zh)}</span></div>
           ${st.ok ? fb(true, 'Порядок черт верный!') : `<button class="kid-btn" data-act="kidDone" data-t="${t.id}">Обвести</button>`}`;
@@ -802,7 +802,7 @@
       default: {
         const label = { photo: 'Сфотографировать работу', draw: 'Открыть холст', video: 'Записать видео', file: 'Прикрепить файл', parent: 'Загрузить фото с родителем', text: '', game: 'Начать игру', presentation: 'Открыть презентацию' }[t.type];
         if (t.type === 'text') return st.ok ? fb(true, 'Ответ отправлен преподавателю') : `<textarea class="textarea" placeholder="Твой ответ"></textarea><button class="kid-btn" data-act="kidDone" data-t="${t.id}">Отправить</button>`;
-        return st.ok ? fb(true, ['game', 'presentation'].includes(t.type) ? 'Готово! Результат засчитан.' : 'Отправлено! Преподаватель проверит и оставит комментарий.') : `<div class="upload" data-act="kidDone" data-t="${t.id}">${icon(TT[t.type].icon, 26)}<div style="margin-top:6px;font-weight:800">${label}</div>${t.type === 'parent' ? '<div class="xs">Задание для мамы или папы вместе с ребёнком</div>' : ''}</div>`;
+        return st.ok ? fb(true, ['game', 'presentation'].includes(t.type) ? 'Готово! Результат засчитан' : 'Отправлено! Преподаватель проверит и оставит комментарий') : `<div class="upload" data-act="kidDone" data-t="${t.id}">${icon(TT[t.type].icon, 26)}<div style="margin-top:6px;font-weight:800">${label}</div>${t.type === 'parent' ? '<div class="xs">Задание для мамы или папы вместе с ребёнком</div>' : ''}</div>`;
       }
     }
   }
@@ -826,7 +826,7 @@
           <div class="slide-frame big"><div class="slide-in">${icon('monitor', 34)}<b>${esc(pr.title)}</b><span class="xs muted">${esc(pr.formats || 'PPTX, PDF')}</span></div></div>
           <div class="grid" style="grid-template-columns:1fr 120px"><label class="field"><span>Название</span><input class="input" data-pres="title" value="${esc(pr.title)}"></label><label class="field"><span>Слайдов</span><input class="input" type="number" min="0" data-pres="slides" value="${pr.slides || 0}"></label></div>
           <div class="row wrap"><button class="btn sm" data-act="fakeUpload" data-what="презентацию PPTX">${icon('upload', 14)}Загрузить PPTX</button><button class="btn sm" data-act="fakeUpload" data-what="презентацию PDF">${icon('upload', 14)}Загрузить PDF</button></div>
-          <div class="hint-box">${icon('sparkle', 16)}<span>Преподаватель листает слайды, открывает показ на весь экран и скачивает PPTX или PDF. Отдельные слайды выводятся в шаги блоком «Презентация».</span></div>
+          <div class="hint-box">${icon('sparkle', 16)}<span>Преподаватель листает слайды, открывает показ на весь экран и скачивает PPTX или PDF. Отдельные слайды выводятся в шаги блоком «Презентация»</span></div>
         </div>
         <div class="card">
           <div class="card-h"><h3>Файлы для скачивания</h3><span class="xs muted">рабочая тетрадь, приложения</span></div>
@@ -853,7 +853,7 @@
     const seg = `<div class="seg">${[['teacher', 'Кабинет преподавателя', 'tablet'], ['duo', 'Двухэкранный режим', 'monitor'], ['kid', 'ДЗ глазами ученика', 'send']].map(([k, t, ic]) => `<button class="${ui.pv === k ? 'on' : ''}" data-act="setPv" data-v="${k}">${icon(ic, 14)}${t}</button>`).join('')}</div>`;
     let body;
     if (ui.pv === 'duo') body = tShow(L);
-    else if (ui.pv === 'kid') body = `<div class="grid parent-grid" style="align-items:start"><div class="card"><h3 style="margin-bottom:10px">${esc(L.hw.title)}</h3><p class="small muted" style="margin:0 0 12px">${esc(L.hw.about || '')}</p>${L.hw.tasks.map((t, i) => `<div class="task-item ${t.id === ui.taskId ? 'on' : ''}" style="grid-template-columns:32px 1fr auto" data-act="selTask" data-id="${t.id}"><span class="block-ico" style="background:#14141409">${icon(TT[t.type].icon, 14)}</span><div><b class="small">${i + 1}. ${esc(t.title)}</b><div class="xs muted">${TT[t.type].label}</div></div><span class="check-badge check-${TT[t.type].check}">${TT[t.type].check === 'auto' ? 'авто' : 'учитель'}</span></div>`).join('')}<div class="hint-box" style="margin-top:12px">${icon('sparkle', 16)}<span>Предпросмотр: ответы не сохраняются и не влияют на задания учеников.</span></div></div><div data-region="kid">${kidInner(L)}</div></div>`;
+    else if (ui.pv === 'kid') body = `<div class="grid parent-grid" style="align-items:start"><div class="card"><h3 style="margin-bottom:10px">${esc(L.hw.title)}</h3><p class="small muted" style="margin:0 0 12px">${esc(L.hw.about || '')}</p>${L.hw.tasks.map((t, i) => `<div class="task-item ${t.id === ui.taskId ? 'on' : ''}" style="grid-template-columns:32px 1fr auto" data-act="selTask" data-id="${t.id}"><span class="block-ico" style="background:#14141409">${icon(TT[t.type].icon, 14)}</span><div><b class="small">${i + 1}. ${esc(t.title)}</b><div class="xs muted">${TT[t.type].label}</div></div><span class="check-badge check-${TT[t.type].check}">${TT[t.type].check === 'auto' ? 'авто' : 'учитель'}</span></div>`).join('')}<div class="hint-box" style="margin-top:12px">${icon('sparkle', 16)}<span>Предпросмотр: ответы не сохраняются и не влияют на задания учеников</span></div></div><div data-region="kid">${kidInner(L)}</div></div>`;
     else body = teacherView(L);
     return `<div class="row between wrap" style="gap:10px;margin-bottom:16px">${seg}<span class="xs muted">Урок собирается один раз — представления для преподавателя и ученика формируются автоматически</span></div>${body}`;
   }
@@ -879,7 +879,7 @@
         ${hw.flow ? `<div class="tv-box"><div class="eyebrow">Как ребёнок проходит ДЗ</div>${list(hw.flow)}</div>` : ''}
         ${(hw.materials || []).length ? `<div class="tv-box"><div class="eyebrow">Материалы</div>${list(hw.materials.join('\n'))}</div>` : ''}
         <p class="small"><b>Формат ответа:</b> ${esc(hw.format || '—')}, ${hw.tasks.length} ${plural(hw.tasks.length, 'задание', 'задания', 'заданий')}</p>
-        <div class="hint-box">${icon('sparkle', 16)}<span>Это каноническое домашнее задание из методики. Оно становится реальным назначением только после выдачи урока группе.</span></div>
+        <div class="hint-box">${icon('sparkle', 16)}<span>Это каноническое домашнее задание из методики. Оно становится реальным назначением только после выдачи урока группе</span></div>
         <button class="btn dark" style="margin-top:12px" data-act="setPv" data-v="kid">${icon('eye', 14)}Предпросмотр</button>`;
     } else {
       inner = `${acc('book', 'Об уроке', `<p class="small" style="margin:0">${esc(L.about || L.goal)}</p>`, true)}
@@ -920,7 +920,7 @@
         <div class="card stack">
           <h3>Материалы для домашнего повторения</h3>
           <label class="field"><span>Рекомендация родителю</span><textarea class="textarea" data-id="${L.id}" data-k="parentNote" placeholder="Как повторить урок дома">${esc(L.parent.note)}</textarea></label>
-          <div class="hint-box">${icon('sparkle', 16)}<span>После урока ученик повторяет шаги в свободной последовательности. В повторение попадают компоненты с отметкой «Повторение».</span></div>
+          <div class="hint-box">${icon('sparkle', 16)}<span>После урока ученик повторяет шаги в свободной последовательности. В повторение попадают компоненты с отметкой «Повторение»</span></div>
         </div>
         <div class="card">
           <div class="card-h"><h3>Шаги в повторении</h3><span class="xs muted">${review.length} из ${L.steps.length}</span></div>
@@ -1048,8 +1048,7 @@
   const READING = { none: 'Без самостоятельного чтения', pinyin: 'Иероглифы + пиньинь', full: 'Иероглифы, пиньинь по запросу' };
 
   const BAO = { safe: ['Давай повторим цвета! Найди 红色, красный.', 'Отвечает только по заданиям урока'], helper: ['Не получается? Подскажу, как пишется 你. Попробуешь сам?', 'Объясняет и даёт подсказки'], extended: ['Ты в кафе. Закажи чай: 我要一杯茶!', 'Ведёт диалог и разбирает ошибки'] };
-  const aiBuddy = (mode) => `<div class="bao-card"><img src="assets/bao.jpg" alt="Панда Бао" width="200" height="200"><div class="bao-bubble">${esc(BAO[mode][0])}</div></div>
-    <div class="row wrap" style="gap:8px"><b style="font-size:17px">Панда Бао</b><span class="zh muted small">宝宝</span></div>`;
+  const aiBuddy = (mode) => `<div class="bao-card"><img src="assets/bao.jpg" alt="Панда Бао" width="200" height="200"><div class="bao-bubble">${esc(BAO[mode][0])}</div></div>`;
   function vScenarios(sid) {
     const list = S.scenarios;
     const a = list.find((x) => x.id === sid) || list[0];
@@ -1075,7 +1074,7 @@
           </div>
           <div class="card stack">
             <div class="card-h" style="margin:0"><h3>Прогресс</h3>${seg('progress', { soft: 'Мягкая модель', grades: 'Оценки учителя' })}</div>
-            ${a.progress === 'soft' ? `<div class="grid g2">${a.softLabels.map((t, i) => `<input class="input" data-sl="${a.id}" data-i="${i}" value="${esc(t)}">`).join('')}</div><div class="xs muted">Для младших детей прогресс показывается не оценками, а мягкими статусами.</div>` : '<div class="xs muted">Ученик и родитель видят реальные оценки преподавателя по заданиям и урокам.</div>'}
+            ${a.progress === 'soft' ? `<div class="grid g2">${a.softLabels.map((t, i) => `<input class="input" data-sl="${a.id}" data-i="${i}" value="${esc(t)}">`).join('')}</div><div class="xs muted">Для младших детей прогресс показывается не оценками, а мягкими статусами</div>` : '<div class="xs muted">Ученик и родитель видят реальные оценки преподавателя по заданиям и урокам</div>'}
           </div>
           <div class="card">
             <div class="card-h"><h3>Модули платформы</h3><span class="xs muted">${Object.values(a.modules).filter(Boolean).length} из ${Object.keys(MODS).length}</span></div>
@@ -1089,10 +1088,12 @@
         </div>
         <aside class="sticky">
           <div class="card stack">
-            <div class="card-h" style="margin:0"><h3>Режим ИИ-ассистента</h3><span class="chip purple">Этап 2</span></div>
+            <div class="card-h" style="margin:0"><h3>Панда Бао <span class="zh muted" style="font-weight:600">宝宝</span></h3><label class="check small" title="Бао в кабинете ученика"><span class="switch"><input type="checkbox" data-id="${a.id}" data-k="aiOn" data-rerender="1" ${a.aiOn !== false ? 'checked' : ''}><i></i></span>${a.aiOn !== false ? 'Включена' : 'Выключена'}</label></div>
+            <div class="stack" style="${a.aiOn === false ? 'opacity:.4;pointer-events:none' : ''}">
             ${aiBuddy(a.ai)}
             <div class="seg wrap-seg">${Object.entries(AIMODE).map(([v, t]) => `<button class="${a.ai === v ? 'on' : ''}" data-act="setField" data-id="${a.id}" data-k="ai" data-v="${v}">${t[0]}</button>`).join('')}</div>
-            <div class="xs muted">${BAO[a.ai][1]}. ${AIMODE[a.ai][1]}.</div>
+            <div><b class="small">${BAO[a.ai][1]}</b><div class="xs muted" style="margin-top:2px">${AIMODE[a.ai][1]}</div></div>
+            </div>
           </div>
         </aside>
       </div>`;
@@ -1146,7 +1147,7 @@
 
   // ---------------------------------------------------------------- Действия
   const A = {
-    reset() { modal(`${mh('Сбросить демо-данные?', 'Все изменения в этом браузере будут заменены исходными методиками.')}<div class="modal-f"><button class="btn" data-act="closeModal">Отмена</button><button class="btn dark" data-act="doReset">Сбросить</button></div>`); },
+    reset() { modal(`${mh('Сбросить демо-данные?', 'Все изменения в этом браузере будут заменены исходными методиками')}<div class="modal-f"><button class="btn" data-act="closeModal">Отмена</button><button class="btn dark" data-act="doReset">Сбросить</button></div>`); },
     doReset() { S = clone(window.SEED); reindex(); save(); closeModal(); ui.stepId = null; ui.taskId = null; ui.kid = {}; go('#home'); toast('Демо-данные восстановлены'); },
     closeModal, closeModalBg(d, el, e) { if (e.target === el) closeModal(); },
     toast(d) { toast(d.msg); },
@@ -1205,7 +1206,7 @@
       S.lessons[copy.id] = copy; const mod = moduleOf(L.id); mod.lessons.splice(mod.lessons.indexOf(L.id) + 1, 0, copy.id); reindex(); save(); render(); toast('Урок продублирован');
     },
     confirmDel(d) {
-      modal(`${mh(`Удалить ${d.what}?`, 'Опубликованные версии методики у преподавателей не изменятся — удаление попадёт в следующую версию.')}<div class="modal-f"><button class="btn" data-act="closeModal">Отмена</button><button class="btn dark" data-act="doDel" data-id="${d.id}">Удалить</button></div>`);
+      modal(`${mh(`Удалить ${d.what}?`, 'Опубликованные версии методики у преподавателей не изменятся — удаление попадёт в следующую версию')}<div class="modal-f"><button class="btn" data-act="closeModal">Отмена</button><button class="btn dark" data-act="doDel" data-id="${d.id}">Удалить</button></div>`);
     },
     doDel(d) {
       if (S.lessons[d.id]) { const mod = moduleOf(d.id); if (mod) mod.lessons.splice(mod.lessons.indexOf(d.id), 1); delete S.lessons[d.id]; reindex(); }
@@ -1232,7 +1233,7 @@
 
     versions(d) {
       const m = idx[d.id];
-      modal(`${mh(`Версии: ${esc(m.title)}`, 'Методика хранится как эталон. Проведённые занятия и результаты ссылаются на версию и не меняются.')}
+      modal(`${mh(`Версии: ${esc(m.title)}`, 'Методика хранится как эталон. Проведённые занятия и результаты ссылаются на версию и не меняются')}
         ${m.history.map((h, i) => `<div class="history-item" style="grid-template-columns:60px 1fr auto;align-items:center"><span class="ver">v${esc(h.v)}</span><div><div>${esc(h.note)}</div><div class="xs muted">${esc(h.date)}, ${esc(h.who)}</div></div><div class="row">${statusChip(h.status)}${i > 0 ? `<button class="btn xs" data-act="toast" data-msg="Версия v${esc(h.v)} открыта только для чтения">Открыть</button>` : ''}</div></div>`).join('')}
         <div class="modal-f"><button class="btn" data-act="closeModal">Закрыть</button></div>`);
     },
@@ -1261,7 +1262,7 @@
         <div class="stack">
           <div class="card soft" style="padding:14px">${checks.map(([ok, t]) => `<div class="row small" style="padding:4px 0"><span class="radio-dot ${ok ? 'on' : ''}" style="${ok ? '' : 'border-color:#c77700;color:#c77700'}">${ok ? icon('check', 12) : '!'}</span>${esc(t)}</div>`).join('')}</div>
           <label class="field"><span>Что изменилось</span><textarea class="textarea" id="pubNote" placeholder="Например: добавлен урок 4 «Цвета», обновлено ДЗ к уроку 3"></textarea></label>
-          <div class="hint-box">${icon('sparkle', 16)}<span>Преподаватели получат новую версию при следующем подключении. Уже выданные домашние задания и сохранённые результаты учеников задним числом не меняются. Уроки, загруженные для офлайна, во время занятия не меняются.</span></div>
+          <div class="hint-box">${icon('sparkle', 16)}<span>Преподаватели получат новую версию при следующем подключении. Уже выданные домашние задания и сохранённые результаты учеников задним числом не меняются. Уроки, загруженные для офлайна, во время занятия не меняются</span></div>
         </div>
         <div class="modal-f"><button class="btn" data-act="closeModal">Отмена</button><button class="btn dark" data-act="doPublish" data-id="${m.id}">${icon('send', 15)}Опубликовать</button></div>`);
     },
