@@ -235,13 +235,6 @@
     const tasks = all.reduce((a, l) => a + l.hw.tasks.length, 0);
     const nolic = S.media.filter((x) => /Не указана/.test(x.license)).length;
     const recent = [ref, ...all.filter((l) => l !== ref)].filter(Boolean).slice(0, 4);
-    const zones = [
-      ['book', '#c9ff4f66', 'Программы', `${S.methods.length} ${plural(S.methods.length, 'программа', 'программы', 'программ')}`, '#methods'],
-      ['list', '#c9b4ff59', 'Уроки', `${all.length} ${plural(all.length, 'урок', 'урока', 'уроков')}, ${steps} шагов`, ref ? `#lesson/${ref.id}/steps` : '#methods'],
-      ['users', '#70b7ff38', 'Возрастные сценарии', `${S.scenarios.length} ${plural(S.scenarios.length, 'сценарий', 'сценария', 'сценариев')}`, '#scenarios'],
-      ['folder', '#ffb6e859', 'Материалы', `${S.media.length} файлов`, '#media'],
-      ['cards', '#ffe58a80', 'Шаблоны заданий', `${S.templates.length} шаблонов`, '#templates'],
-    ];
     const stat = (ic, label, n, sub) => `<div class="stat-row"><span class="block-ico" style="background:#14141409">${icon(ic, 15)}</span><div><div class="small" style="font-weight:700">${label}</div>${sub ? `<div class="xs muted">${sub}</div>` : ''}</div><b class="n">${n}</b></div>`;
     return `
     <div class="home-grid">
@@ -254,7 +247,6 @@
           </div>
           <span class="btn sm">Открыть урок ${icon('chev', 14)}</span>
         </a>` : ''}
-        <div class="grid g5">${zones.map(([ic, bg, t, d, h]) => `<a class="card flat zone" href="${h}"><span class="block-ico" style="background:${bg}">${icon(ic, 18)}</span><b>${t}</b><span class="xs muted">${d}</span></a>`).join('')}</div>
         <div class="card">
           <div class="card-h"><h3>Что нужно сделать</h3><span class="chip">3</span></div>
           ${todo('send', '#70b7ff38', 'Запрос преподавателя', 'Анна К. просит доп. карточки к уроку 3 «Фрукты»', '#media')}
@@ -1056,31 +1048,8 @@
   const READING = { none: 'Без самостоятельного чтения', pinyin: 'Иероглифы + пиньинь', full: 'Иероглифы, пиньинь по запросу' };
 
   const BAO = { safe: ['Давай повторим цвета! Найди 红色, красный.', 'Отвечает только по заданиям урока'], helper: ['Не получается? Подскажу, как пишется 你. Попробуешь сам?', 'Объясняет и даёт подсказки'], extended: ['Ты в кафе. Закажи чай: 我要一杯茶!', 'Ведёт диалог и разбирает ошибки'] };
-  const baoSvg = (sz = 120) => `<svg class="bao" width="${sz}" height="${sz}" viewBox="0 0 120 120" aria-label="Панда Бао">
-    <circle cx="60" cy="62" r="54" fill="#c9b4ff" opacity=".45"/>
-    <ellipse cx="60" cy="100" rx="30" ry="18" fill="#fff"/>
-    <path d="M33 92 Q60 108 87 92 L84 100 Q60 114 36 100 Z" fill="#c9ff4f"/>
-    <path d="M78 98 l12 14 l4 -8 z" fill="#c9ff4f"/>
-    <circle cx="33" cy="34" r="12" fill="#2b2b36"/><circle cx="87" cy="34" r="12" fill="#2b2b36"/>
-    <circle cx="33" cy="34" r="5" fill="#ffb6e8"/><circle cx="87" cy="34" r="5" fill="#ffb6e8"/>
-    <ellipse cx="60" cy="60" rx="36" ry="32" fill="#fff"/>
-    <ellipse cx="46" cy="58" rx="8.5" ry="10.5" transform="rotate(-18 46 58)" fill="#2b2b36"/>
-    <ellipse cx="74" cy="58" rx="8.5" ry="10.5" transform="rotate(18 74 58)" fill="#2b2b36"/>
-    <circle cx="47.5" cy="57" r="3.4" fill="#fff"/><circle cx="72.5" cy="57" r="3.4" fill="#fff"/>
-    <circle cx="48.6" cy="55.8" r="1.2" fill="#2b2b36"/><circle cx="71.4" cy="55.8" r="1.2" fill="#2b2b36"/>
-    <ellipse cx="60" cy="69" rx="4.2" ry="3" fill="#2b2b36"/>
-    <path d="M55 74 Q60 79 65 74" stroke="#2b2b36" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-    <ellipse cx="38" cy="72" rx="6" ry="3.8" fill="#ffb6e8" opacity=".8"/><ellipse cx="82" cy="72" rx="6" ry="3.8" fill="#ffb6e8" opacity=".8"/>
-    <path d="M60 28 C58 18 64 10 74 9 C72 18 68 25 60 28 Z" fill="#c9ff4f" stroke="#9ad02a" stroke-width="1"/>
-    <path d="M60 28 L69 13" stroke="#9ad02a" stroke-width="1"/>
-    <circle cx="96" cy="88" r="9" fill="#ffb6e8"/><rect x="92" y="77" width="8" height="3" rx="1.5" fill="#2b2b36"/><path d="M96 97 v6" stroke="#2b2b36" stroke-width="1.6"/>
-    <text x="96" y="91.5" font-size="8" text-anchor="middle" fill="#2b2b36" font-weight="700">福</text>
-  </svg>`;
-  const aiBuddy = (mode) => `<div class="bao-card"><div class="bao-pic">${baoSvg(116)}</div><div class="grow stack-s">
-    <div class="row wrap" style="gap:8px"><b style="font-size:17px">Панда Бао</b><span class="zh muted small">宝宝</span><span class="chip">${AIMODE[mode][0]}</span></div>
-    <div class="bao-bubble">${esc(BAO[mode][0])}</div>
-    <div class="xs muted">${BAO[mode][1]}. ${AIMODE[mode][1]}.</div></div></div>`;
-
+  const aiBuddy = (mode) => `<div class="bao-card"><img src="assets/bao.jpg" alt="Панда Бао" width="200" height="200"><div class="bao-bubble">${esc(BAO[mode][0])}</div></div>
+    <div class="row wrap" style="gap:8px"><b style="font-size:17px">Панда Бао</b><span class="zh muted small">宝宝</span></div>`;
   function vScenarios(sid) {
     const list = S.scenarios;
     const a = list.find((x) => x.id === sid) || list[0];
@@ -1090,7 +1059,7 @@
     const seg = (k, map) => `<div class="seg">${Object.entries(map).map(([v, t]) => `<button class="${a[k] === v ? 'on' : ''}" data-act="setField" data-id="${a.id}" data-k="${k}" data-v="${v}">${Array.isArray(t) ? t[0] : t}</button>`).join('')}</div>`;
     return `<div class="row between wrap" style="margin-bottom:32px;gap:12px;align-items:flex-end"><div><h1>Возрастные сценарии</h1></div><button class="btn dark lg" data-act="newScenario">${icon('plus', 16)}Новый сценарий</button></div>
       <div class="grid g3" style="margin-bottom:18px">${list.map((x) => `<a class="card flat zone ${x.id === a.id ? 'sel-card' : ''}" href="#scenarios/${x.id}"><div class="row between"><span class="chip ${x.accent}">${esc(x.age)}</span></div><b style="font-size:17px">${esc(x.title)}</b></a>`).join('')}</div>
-      <div class="scen-grid single">
+      <div class="scen-grid">
         <div class="stack">
           <div class="card stack">
             <div class="row" style="gap:10px"><input class="input bare title grow" data-id="${a.id}" data-k="title" value="${esc(a.title)}">${used.length ? '' : `<button class="btn icon ghost danger" data-act="confirmDel" data-id="${a.id}" data-what="сценарий">${icon('trash', 15)}</button>`}</div>
@@ -1117,13 +1086,15 @@
             <div class="field"><span>Допустимые типы заданий <span class="muted" style="font-weight:500">— остальные в конструкторе ДЗ помечаются «вне сценария»</span></span>
               <div class="props">${Object.entries(TT).filter(([, v]) => !v.stage2).map(([k, v]) => `<span class="prop ${a.tasks.includes(k) ? 'on' : ''}" data-act="toggleScTask" data-id="${a.id}" data-k="${k}">${v.label}</span>`).join('')}</div></div>
           </div>
+        </div>
+        <aside class="sticky">
           <div class="card stack">
             <div class="card-h" style="margin:0"><h3>Режим ИИ-ассистента</h3><span class="chip purple">Этап 2</span></div>
-            ${seg('ai', AIMODE)}
             ${aiBuddy(a.ai)}
+            <div class="seg wrap-seg">${Object.entries(AIMODE).map(([v, t]) => `<button class="${a.ai === v ? 'on' : ''}" data-act="setField" data-id="${a.id}" data-k="ai" data-v="${v}">${t[0]}</button>`).join('')}</div>
+            <div class="xs muted">${BAO[a.ai][1]}. ${AIMODE[a.ai][1]}.</div>
           </div>
-          <div class="card"><div class="card-h"><h3>Используется в программах</h3></div>${used.length ? used.map((m) => `<a class="todo" href="#method/${m.id}"><span class="grow small"><b>${esc(m.title)}</b></span>${statusChip(m.status)}</a>`).join('') : '<div class="empty">Пока не назначен программам</div>'}</div>
-        </div>
+        </aside>
       </div>`;
   }
 
