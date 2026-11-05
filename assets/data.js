@@ -91,16 +91,16 @@
       [B.drag('target', 'Перетащи слово к шарику нужного цвета', [['红色', '🎈', C.red], ['黄色', '🎈', C.yellow], ['蓝色', '🎈', C.blue], ['绿色', '🎈', C.green]])],
       { answers: '红色 → красный, 黄色 → жёлтый, 蓝色 → синий, 绿色 → зелёный' }),
     step('Видео «Colors song»', 3, 'Закрепить цвета через песню', 'Включите видео. Во втором проигрывании дети поднимают карточки на каждый цвет.',
-      [B.media('video', 'Colors song · 颜色歌', '2:15')], { props: ['колонка'] }),
+      [B.media('video', 'Colors song, 颜色歌', '2:15')], { props: ['колонка'] }),
     step('Какой цвет спрятался?', 3, 'Тренировка памяти', 'Покажите все карточки, затем скройте одну. Дети угадывают: 蓝色！',
       [B.reveal([['红色', 'hóngsè', 'красный', C.red], ['蓝色', 'lánsè', 'синий', C.blue], ['?', '', 'спрятался', '#e6e6ea'], ['白色', 'báisè', 'белый', C.white]])]),
     step('Работа с карточками за столом', 3, 'Индивидуальная отработка', 'Раздайте приложение 2. Дети раскладывают карточки по цветам и называют их соседу.',
-      [B.slides(5, 6, 'Слайды с карточками цветов'), B.print('Приложение 2 · Карточки цветов', 'Печать A4, 6 карточек на листе')], { props: ['приложение 2 «Раскраска»'] }),
+      [B.slides(5, 6, 'Слайды с карточками цветов'), B.print('Приложение 2, Карточки цветов', 'Печать A4, 6 карточек на листе')], { props: ['приложение 2 «Раскраска»'] }),
     step('Диалог героев', 3, 'Отработать вопрос-ответ', 'Разыграйте диалог по ролям: сначала учитель + Сяо Лон, затем пары детей.',
       [B.scene('Что за цвет?', [['小妹', '这是什么颜色？', 'zhè shì shénme yánsè?', 'Какого это цвета?'], ['小龙', '这是绿色。', 'zhè shì lǜsè.', 'Это зелёный.']])],
       { phrases: [['这是绿色。', 'zhè shì lǜsè.', 'Это зелёный.']], answers: 'Пары задают вопрос и отвечают целой фразой' }),
     step('Игра «Светофор»', 2, 'Цвета в бытовом контексте', 'Красный — стоим, жёлтый — хлопаем, зелёный — шагаем на месте.',
-      [B.stat('Светофор', '红色 · 黄色 · 绿色', [C.red, C.yellow, C.green])]),
+      [B.stat('Светофор', '红色, 黄色, 绿色', [C.red, C.yellow, C.green])]),
     step('Рабочая тетрадь', 3, 'Мелкая моторика + цвет', 'Страница 8: раскрасить шарики по иероглифу. Помогайте только жестом.',
       [B.print('Рабочая тетрадь, стр. 8', 'Раскрась по иероглифу')], { props: ['рабочая тетрадь'] }),
     step('Повторение: составь пары', 3, 'Итоговая проверка 6 цветов', 'Ребята по очереди соединяют иероглиф и цвет на доске.',
@@ -113,7 +113,7 @@
   [['greet', ['你好，小朋友！']], ['story', ['彩虹', '颜色']], ['words', ['红色', '黄色', '蓝色', '这是红色。'], ['Два прохода с карточками', 'Проход 1 — слова: 红色 / 黄色 / 蓝色\nПроход 2 — предложения: 这是红色。/ 这是黄色。/ 这是蓝色。']], ['words', ['绿色', '白色', '黑色']], ['game', ['红色在哪儿？']], ['words', ['什么颜色？']], ['activity', ['跑到…！'], ['Действие', 'Разложить обручи\nНазвать цвет\nДети бегут к обручу']], ['game', ['对！/ 不对！']], ['video', []], ['game', []], ['activity', []], ['dialog', ['什么颜色？', '这是红色。']], ['game', []], ['book', []], ['review', ['红色', '黄色', '蓝色', '绿色', '白色', '黑色']], ['greet', ['再见！']]].forEach(([act, words, tbox], i) => {
     const st = colorsSteps[i]; st.activity = act; st.words = words; if (tbox) st.tbox = { title: tbox[0], items: tbox[1] };
   });
-  colorsSteps[4].mats = ['Карточки урока']; colorsSteps[8].mats = ['Видео «Colors song»']; colorsSteps[10].mats = ['Презентация урока', 'Приложение 2 · Карточки цветов']; colorsSteps[13].mats = ['Рабочая тетрадь'];
+  colorsSteps[4].mats = ['Карточки урока']; colorsSteps[8].mats = ['Видео «Colors song»']; colorsSteps[10].mats = ['Презентация урока', 'Приложение 2, Карточки цветов']; colorsSteps[13].mats = ['Рабочая тетрадь'];
 
   const colorsHW = {
     id: id('h'), title: 'Практика дома: цвета вокруг меня', dueDays: 7, check: 'hybrid', grading: 'soft', withParent: true, estimate: 10,
@@ -192,7 +192,7 @@
   const L1 = { id: id('L'), num: 1, title: 'Животные на ферме', topic: 'Животные фермы', goal: 'Ребёнок называет 4 животных фермы и представляется фразой 我是…', result: 'Знает 狗, 猫, 兔子, 马, 农场; говорит 我是… и 这是…; выполняет команды 我们跑吧 / 我们跳吧', prep: 'Распечатать карточки животных (10 шт.), подготовить мяч, малярную ленту, игрушечную ферму, проверить видео «Farm animals».', about: 'Первый урок знакомит детей с животными фермы через видео, карточки, движение, счёт, игрушечную ферму и песню. План следует методике: учитель ведёт детей от первых слов к коротким моделям 我是… / 这是… / 在…里.', age: '5–6 лет', difficulty: 'Стартовый', duration: 45, formats: ['offline', 'online', 'hybrid'], status: 'published', version: '1.2', vocab: farmVocab, props: farmProps, materials: mats(1, 16, farmCards, [['Рабочая тетрадь', 'стр. 3–4'], ['Приложение 1', 'карточки для вырезания, A4']]), steps: farmSteps, hw: farmHW, parent: { note: 'Дома повторите животных с мягкими игрушками.' }, assessment: 'soft' };
   const L2 = lightLesson(2, 'Что это за животное?', 'Ребёнок спрашивает 这是什么？ и называет животных', [['猪', 'zhū', 'свинья'], ['羊', 'yáng', 'овца'], ['鸭', 'yā', 'утка'], ['鸡', 'jī', 'курица'], ['奶牛', 'nǎiniú', 'корова'], ['这是什么？', 'zhè shì shénme?', 'что это?', 'phrase']], 'published', ['🐷', '🐑', '🦆', '🐔', '🐮']);
   const L3 = lightLesson(3, 'Этот разноцветный мир', 'Ребёнок узнаёт цвета в окружающем мире', [['红', 'hóng', 'красный'], ['黄', 'huáng', 'жёлтый'], ['蓝', 'lán', 'синий'], ['绿', 'lǜ', 'зелёный'], ['彩虹', 'cǎihóng', 'радуга'], ['好看！', 'hǎokàn!', 'красиво!', 'phrase']], 'published', ['🟥', '🟨', '🟦', '🟩', '🌈']);
-  const L4 = { id: id('L'), num: 4, title: 'Мне нравятся цвета', topic: 'Цвета', goal: 'Ребёнок узнаёт и называет 6 цветов, задаёт вопрос 什么颜色？ и отвечает целой фразой', result: 'Называет 6 цветов, задаёт вопрос 这是什么颜色？ и отвечает 这是红色。, говорит 我喜欢…', prep: 'Распечатать приложение 2, разложить обручи 4 цветов, проверить видео «Colors song».', about: 'Урок про цвета: от радуги Сяо Лона и Сяо Мей к вопросу 什么颜色？ и фразе 我喜欢… Эталонный урок для приёмки конструктора.', age: '5–6 лет', difficulty: 'Стартовый', duration: 45, formats: ['offline', 'online', 'hybrid'], status: 'review', version: '1.0', reference: true, vocab: colorsVocab, props: colorsProps, materials: mats(4, 14, colorsCards, [['Рабочая тетрадь', 'стр. 8'], ['Приложение 2 · Карточки цветов', 'A4, 6 карточек на листе']]), steps: colorsSteps, hw: colorsHW, parent: { note: 'Повторите цвета на прогулке: 红色 — машина, 绿色 — дерево. Песня «颜色歌» доступна в кабинете ребёнка.' }, assessment: 'soft' };
+  const L4 = { id: id('L'), num: 4, title: 'Мне нравятся цвета', topic: 'Цвета', goal: 'Ребёнок узнаёт и называет 6 цветов, задаёт вопрос 什么颜色？ и отвечает целой фразой', result: 'Называет 6 цветов, задаёт вопрос 这是什么颜色？ и отвечает 这是红色。, говорит 我喜欢…', prep: 'Распечатать приложение 2, разложить обручи 4 цветов, проверить видео «Colors song».', about: 'Урок про цвета: от радуги Сяо Лона и Сяо Мей к вопросу 什么颜色？ и фразе 我喜欢… Эталонный урок для приёмки конструктора.', age: '5–6 лет', difficulty: 'Стартовый', duration: 45, formats: ['offline', 'online', 'hybrid'], status: 'review', version: '1.0', reference: true, vocab: colorsVocab, props: colorsProps, materials: mats(4, 14, colorsCards, [['Рабочая тетрадь', 'стр. 8'], ['Приложение 2, Карточки цветов', 'A4, 6 карточек на листе']]), steps: colorsSteps, hw: colorsHW, parent: { note: 'Повторите цвета на прогулке: 红色 — машина, 绿色 — дерево. Песня «颜色歌» доступна в кабинете ребёнка.' }, assessment: 'soft' };
   const L5 = lightLesson(5, 'Растения на лугу', 'Ребёнок называет растения и насекомых луга', [['花', 'huā', 'цветок'], ['草', 'cǎo', 'трава'], ['树', 'shù', 'дерево'], ['蝴蝶', 'húdié', 'бабочка'], ['太阳', 'tàiyáng', 'солнце'], ['我看见…', 'wǒ kànjiàn…', 'я вижу…', 'phrase']], 'published', ['🌸', '🌿', '🌳', '🦋', '☀️']);
   const L6 = lightLesson(6, 'Погода', 'Ребёнок описывает погоду', [['太阳', 'tàiyáng', 'солнце'], ['下雨', 'xià yǔ', 'идёт дождь'], ['冷', 'lěng', 'холодно'], ['热', 'rè', 'жарко']], 'draft', ['☀️', '🌧️', '❄️', '🔥']);
   const L7 = lightLesson(7, 'Одежда', 'Ребёнок называет предметы одежды', [['衣服', 'yīfu', 'одежда'], ['帽子', 'màozi', 'шапка'], ['鞋', 'xié', 'обувь'], ['裤子', 'kùzi', 'брюки']], 'draft', ['👕', '🧢', '👟', '👖']);
@@ -225,41 +225,41 @@
         { v: '1.0', date: '01 сен 2026', who: 'М. Перфилова', note: 'Первая публикация', status: 'archived' },
       ],
       levels: [
-        { id: id('v'), title: 'Уровень 1 · Знакомство', modules: [
-          { id: id('d'), title: 'Модуль 1 · Я и мой мир', lessons: [L1.id, L2.id, L3.id, L4.id, L5.id] },
-          { id: id('d'), title: 'Модуль 2 · Вокруг меня', lessons: [L6.id, L7.id] },
+        { id: id('v'), title: 'Уровень 1. Знакомство', modules: [
+          { id: id('d'), title: 'Модуль 1. Я и мой мир', lessons: [L1.id, L2.id, L3.id, L4.id, L5.id] },
+          { id: id('d'), title: 'Модуль 2. Вокруг меня', lessons: [L6.id, L7.id] },
         ] },
-        { id: id('v'), title: 'Уровень 2 · Первые фразы', modules: [{ id: id('d'), title: 'Модуль 3 · Мой день', lessons: [] }] },
+        { id: id('v'), title: 'Уровень 2. Первые фразы', modules: [{ id: id('d'), title: 'Модуль 3. Мой день', lessons: [] }] },
       ],
     },
     {
-      id: id('m'), title: 'Китайский для младших школьников', direction: 'Китайский язык', segment: 'Частные школы · начальная', age: '7–10 лет', format: 'Класс до 12 учеников, 40 мин',
+      id: id('m'), title: 'Китайский для младших школьников', direction: 'Китайский язык', segment: 'Частные школы, начальная', age: '7–10 лет', format: 'Класс до 12 учеников, 40 мин',
       description: 'Первые иероглифы, аудирование, произношение и игровые задания с автопроверкой.',
       status: 'draft', version: '0.3', updated: '2 ноября', accent: 'purple', assigned: [],
       history: [{ v: '0.3', date: '02 ноя 2026', who: 'Е. Ли', note: 'Черновик программы', status: 'draft' }],
-      levels: [{ id: id('v'), title: 'Уровень 1 · Старт', modules: [{ id: id('d'), title: 'Модуль 1 · Приветствие и знакомство', lessons: [S1.id, S2.id] }] }],
+      levels: [{ id: id('v'), title: 'Уровень 1. Старт', modules: [{ id: id('d'), title: 'Модуль 1. Приветствие и знакомство', lessons: [S1.id, S2.id] }] }],
     },
     {
       id: id('m'), title: 'Подготовка к HSK 2', direction: 'Китайский язык', segment: 'Средняя и старшая школа', age: '11–18 лет', format: 'Индивидуально или группа, 60 мин',
       description: 'Системная подготовка к экзамену: задания привязаны к разделам HSK (аудирование, чтение).',
       status: 'draft', version: '0.1', updated: '20 октября', accent: 'blue', assigned: [],
       history: [{ v: '0.1', date: '20 окт 2026', who: 'Е. Ли', note: 'Создана структура', status: 'draft' }],
-      levels: [{ id: id('v'), title: 'Раздел · Аудирование', modules: [] }, { id: id('v'), title: 'Раздел · Чтение', modules: [] }],
+      levels: [{ id: id('v'), title: 'Аудирование', modules: [] }, { id: id('v'), title: 'Чтение', modules: [] }],
     },
   ];
 
   const orgs = [
-    { id: 'o1', title: 'Детский сад «Радуга»', type: 'Детский сад', groups: [{ id: 'g1', title: 'Группа «Панды» · 5–6 лет' }, { id: 'g2', title: 'Группа «Дракончики» · 5–6 лет' }] },
+    { id: 'o1', title: 'Детский сад «Радуга»', type: 'Детский сад', groups: [{ id: 'g1', title: 'Группа «Панды», 5–6 лет' }, { id: 'g2', title: 'Группа «Дракончики», 5–6 лет' }] },
     { id: 'o2', title: 'Школа «Лингва Кидс»', type: 'Частная школа', groups: [{ id: 'g3', title: '1 «А» класс' }, { id: 'g4', title: '2 «Б» класс' }] },
     { id: 'o3', title: 'Частные преподаватели', type: 'Личный контур', groups: [{ id: 'g5', title: 'Индивидуальные ученики' }] },
   ];
 
   const media = [
-    { id: id('x'), kind: 'video', title: 'Colors song · 颜色歌', size: '48 МБ', lesson: 'Урок 4', license: 'Собственный контент Shidao', source: 'Студия Shidao' },
+    { id: id('x'), kind: 'video', title: 'Colors song, 颜色歌', size: '48 МБ', lesson: 'Урок 4', license: 'Собственный контент Shidao', source: 'Студия Shidao' },
     { id: id('x'), kind: 'song', title: 'Песня «你好歌»', size: '3,1 МБ', lesson: 'Уроки 1–7', license: 'Лицензия CC BY 4.0', source: 'Музыка: К. Ван' },
     { id: id('x'), kind: 'video', title: 'Farm animals', size: '36 МБ', lesson: 'Урок 1', license: 'Лицензия до 12.2027', source: 'KidsLearn Ltd.' },
     { id: id('x'), kind: 'image', title: 'Сцена «Радуга»', size: '1,2 МБ', lesson: 'Урок 4', license: 'Собственный контент Shidao', source: 'Иллюстратор А. Ким' },
-    { id: id('x'), kind: 'pdf', title: 'Приложение 2 · Карточки цветов', size: '820 КБ', lesson: 'Урок 4', license: 'Собственный контент Shidao', source: 'Методический отдел' },
+    { id: id('x'), kind: 'pdf', title: 'Приложение 2, Карточки цветов', size: '820 КБ', lesson: 'Урок 4', license: 'Собственный контент Shidao', source: 'Методический отдел' },
     { id: id('x'), kind: 'audio', title: 'Озвучка: 红色 / 黄色 / 蓝色…', size: '640 КБ', lesson: 'Урок 4', license: 'Собственный контент Shidao', source: 'Диктор: Л. Чжан' },
     { id: id('x'), kind: 'pdf', title: 'Рабочая тетрадь, стр. 1–12', size: '4,4 МБ', lesson: 'Уроки 1–5', license: 'Собственный контент Shidao', source: 'Методический отдел' },
   ];
@@ -267,13 +267,13 @@
   // ---------------------------------------------------------------- Возрастные сценарии (ТЗ п. 2.5, 4.5)
   const soft = ['Знакомимся с темой', 'Получается', 'Уверенно используем', 'Стоит немного повторить'];
   const scenarios = [
-    { id: id('a'), title: 'Дошкольники', age: '4–6 лет', segment: 'Детские сады', accent: 'green', ui: 'game', progress: 'soft', softLabels: soft.slice(), ai: 'safe', hwMax: 10, font: 'XL', reading: 'none',
+    { id: id('a'), title: 'Дошкольники', age: '4–6 лет', brief: 'Игра, озвучка и прогресс без оценок', segment: 'Детские сады', accent: 'green', ui: 'game', progress: 'soft', softLabels: soft.slice(), ai: 'safe', hwMax: 10, font: 'XL', reading: 'none',
       modules: { twoScreen: true, offline: true, parent: true, gamification: true, pron: true, hanzi: false, srs: false, dialog: false, analytics: false, hsk: false, plan: false },
       tasks: ['choice', 'match', 'cards', 'audio', 'game', 'pron', 'photo', 'draw', 'parent', 'video'] },
-    { id: id('a'), title: 'Младшие школьники', age: '7–10 лет', segment: 'Частные школы · начальная', accent: 'purple', ui: 'school', progress: 'grades', softLabels: soft.slice(), ai: 'helper', hwMax: 20, font: 'L', reading: 'pinyin',
+    { id: id('a'), title: 'Младшие школьники', age: '7–10 лет', brief: 'Первые иероглифы, пиньинь и оценки', segment: 'Частные школы, начальная', accent: 'purple', ui: 'school', progress: 'grades', softLabels: soft.slice(), ai: 'helper', hwMax: 20, font: 'L', reading: 'pinyin',
       modules: { twoScreen: true, offline: true, parent: true, gamification: true, pron: true, hanzi: true, srs: true, dialog: false, analytics: false, hsk: false, plan: false },
       tasks: ['choice', 'match', 'cards', 'audio', 'order', 'gap', 'hanzi', 'game', 'presentation', 'pron', 'text', 'photo', 'draw', 'parent'] },
-    { id: id('a'), title: 'Средняя и старшая школа', age: '11–18 лет', segment: 'Средняя и старшая школа', accent: 'blue', ui: 'teen', progress: 'grades', softLabels: soft.slice(), ai: 'extended', hwMax: 40, font: 'M', reading: 'full',
+    { id: id('a'), title: 'Средняя и старшая школа', age: '11–18 лет', brief: 'Подготовка к HSK и самостоятельная работа', segment: 'Средняя и старшая школа', accent: 'blue', ui: 'teen', progress: 'grades', softLabels: soft.slice(), ai: 'extended', hwMax: 40, font: 'M', reading: 'full',
       modules: { twoScreen: false, offline: true, parent: false, gamification: true, pron: true, hanzi: true, srs: true, dialog: true, analytics: true, hsk: true, plan: true },
       tasks: ['choice', 'match', 'cards', 'audio', 'order', 'gap', 'hanzi', 'presentation', 'pron', 'text', 'file', 'video'] },
   ];
