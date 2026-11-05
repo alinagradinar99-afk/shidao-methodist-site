@@ -496,3 +496,8 @@ h3 { font-size: 16px; font-weight: 800; margin: 0; }
 .prog-stats { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 28px 0 22px; font-size: 13.5px; color: var(--text-2); }
 .prog-stats span { display: inline-flex; align-items: center; gap: 6px; }
 .prog-stats b { color: var(--foreground); font-weight: 700; }
+
+.prog-row { border: 1px solid var(--line-2); border-radius: 14px; padding: 10px; background: #fafafb; }
+.tv-tile { border: 1px solid var(--line-2); border-radius: 14px; padding: 10px 12px; background: #fff; }
+.anat { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+@media (max-width: 720px) { .anat { grid-template-columns: minmax(0, 1fr); } }

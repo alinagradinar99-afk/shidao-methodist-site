@@ -2,7 +2,7 @@
 // Без сборки: состояние в localStorage, маршрутизация по hash.
 
 (() => {
-  const KEY = 'shidao-methodist-v5';
+  const KEY = 'shidao-methodist-v6';
   const clone = (o) => JSON.parse(JSON.stringify(o));
 
   let S = null;
@@ -367,7 +367,7 @@
         </div>
         <div class="card">
           <div class="card-h"><h3>Описание для преподавателя</h3><button class="btn xs" data-act="teacherProgram" data-id="${m.id}">${icon('eye', 12)}Как видит</button></div>
-          <div class="stack-s">${TEACHER_INFO.map(([k, t]) => `<details class="tv-acc"><summary>${t}</summary><textarea class="textarea" style="min-height:70px;margin-top:8px" data-ti="${m.id}" data-k="${k}">${esc((m.teacherInfo || {})[k] || '')}</textarea></details>`).join('')}</div>
+          <div class="stack-s">${TEACHER_INFO.map(([k, t]) => `<details class="tv-acc"><summary>${t}</summary><textarea class="textarea" style="min-height:70px;margin-top:8px" data-ti="${m.id}" data-k="${k}">${esc((m.teacherInfo || {})[k] || '')}</textarea></details>`).join('')}${progListEditor(m)}</div>
         </div>
         <div class="card">
           <div class="card-h"><h3>Назначена</h3><button class="btn xs" data-act="assign" data-id="${m.id}">Изменить</button></div>
@@ -380,6 +380,10 @@
       </aside>
     </div>`;
   }
+  const PROG_LISTS = [['anatomy', 'Анатомия урока', 'Этап', true], ['topics', 'Темы текущего комплекта', 'Уроки'], ['ecosystem', 'Экосистема материалов', 'Материал'], ['characters', 'Персонажи уроков', 'Персонаж']];
+  const progListEditor = (m) => PROG_LISTS.map(([k, t, ph, withMin]) => `<details class="tv-acc"><summary>${t}<span class="xs muted" style="font-weight:500">${(m[k] || []).length}</span></summary><div class="stack-s" style="margin-top:8px">
+    ${(m[k] || []).map((r, i) => `<div class="prog-row"><div class="row" style="gap:6px">${withMin ? `<span class="step-n">${i + 1}</span>` : ''}<input class="input grow" data-id="${r.id}" data-k="title" value="${esc(r.title)}" placeholder="${ph}">${withMin ? `<input class="input" style="width:76px" data-id="${r.id}" data-k="min" value="${esc(r.min || '')}" placeholder="мин">` : ''}<button class="btn icon ghost danger" data-act="delProgRow" data-id="${m.id}" data-list="${k}" data-row="${r.id}" title="Удалить">${icon('trash', 14)}</button></div><textarea class="textarea" style="min-height:48px;margin-top:6px" data-id="${r.id}" data-k="text" placeholder="Описание">${esc(r.text || '')}</textarea></div>`).join('')}
+    <button class="btn xs" style="align-self:flex-start" data-act="addProgRow" data-id="${m.id}" data-list="${k}">${icon('plus', 12)}Добавить</button></div></details>`).join('');
   const TEACHER_INFO = [['approach', 'Подход к обучению'], ['structure', 'Устройство занятия'], ['prep', 'Подготовка учителя'], ['principles', 'Педагогические принципы'], ['results', 'Ожидаемые результаты'], ['safety', 'Требования безопасности']];
   const sel = (o, k, label, opts, extra = '') => `<label class="field"><span>${label}</span><select class="select" data-id="${o.id}" data-k="${k}" ${extra}>${opts.map((x) => `<option ${o[k] === x ? 'selected' : ''}>${esc(x)}</option>`).join('')}</select></label>`;
 
@@ -666,12 +670,18 @@
       <span class="check-badge check-${TT[t.type].check}">${{ auto: 'авто', manual: 'ручная', hybrid: 'гибрид', ai: 'ИИ' }[TT[t.type].check]}</span>
     </div>`).join('')}<div class="drop-zone" data-drop="task" data-before=""></div>`;
   }
+  const HW_KINDS = ['Квиз', 'Практика', 'Творческое задание', 'Задание с родителем'];
+  const hwKind = (hw) => hw.kind || (hw.tasks.some((t) => TT[t.type].check === 'auto') ? 'Квиз' : 'Практика');
   function hwSettings(L) {
     const hw = L.hw;
     return `<div class="card stack">
       <div class="row between"><h2>Настройки домашнего задания</h2><span class="chip">${icon('clock', 12)}~${hw.estimate} мин</span></div>
-      <label class="field"><span>Название</span><input class="input" data-id="${hw.id}" data-k="title" value="${esc(hw.title)}"></label>
-      <label class="field"><span>Инструкция</span><textarea class="textarea" style="min-height:60px" data-id="${hw.id}" data-k="about" placeholder="Что сделать дома">${esc(hw.about || '')}</textarea></label>
+      <div class="grid" style="grid-template-columns:minmax(0,1fr) 200px;gap:12px">
+        <label class="field"><span>Название</span><input class="input" data-id="${hw.id}" data-k="title" value="${esc(hw.title)}"></label>
+        <label class="field"><span>Тип</span><select class="select" data-id="${hw.id}" data-k="kind" data-rerender="1">${HW_KINDS.map((x) => `<option ${hwKind(hw) === x ? 'selected' : ''}>${x}</option>`).join('')}</select></label>
+      </div>
+      <label class="field"><span>Описание для ребёнка <span class="muted" style="font-weight:500">— первый экран мини-миссии</span></span><input class="input" data-id="${hw.id}" data-k="kidIntro" data-live="kid" value="${esc(hw.kidIntro || '')}" placeholder="Например: Сопоставь, послушай, затем выбери правильный вариант"></label>
+      <label class="field"><span>Инструкция для преподавателя</span><textarea class="textarea" style="min-height:60px" data-id="${hw.id}" data-k="about" placeholder="Что сделать дома">${esc(hw.about || '')}</textarea></label>
       <label class="field"><span>Как ребёнок проходит ДЗ <span class="muted" style="font-weight:500">— каждый шаг с новой строки</span></span><textarea class="textarea" style="min-height:70px" data-id="${hw.id}" data-k="flow">${esc(hw.flow || '')}</textarea></label>
       <div class="field"><span>Материалы для повторения</span><div class="props">${[...new Set([...matNames(L), ...(hw.materials || [])])].map((x) => `<span class="prop ${(hw.materials || []).includes(x) ? 'on' : ''}" data-act="toggleHwMat" data-m="${esc(x)}">${esc(x)}</span>`).join('')}</div></div>
       <label class="field"><span>Формат ответа</span><input class="input" data-id="${hw.id}" data-k="format" value="${esc(hw.format || '')}" placeholder="Например: интерактивная практика + квиз из 5 вопросов"></label>
@@ -740,6 +750,8 @@
     return `<div class="screen-frame" style="max-width:340px;margin:0 auto;border-radius:30px;padding:10px"><div class="screen phone">
       <div class="screen-head"><span>Домашнее задание</span><span>${i + 1} / ${tasks.length}</span></div>
       <div class="screen-body kid">
+        ${L.hw.title ? `<div><div class="kid-task-title" style="font-size:15px">Домашняя мини-миссия: ${esc(L.title || '')}</div>${L.hw.kidIntro ? `<div class="kid-ins">${esc(L.hw.kidIntro)}</div>` : ''}</div>` : ''}
+        <div class="row between xs" style="color:#4f5b75;font-weight:700"><span>ВОПРОС ${i + 1} ИЗ ${tasks.length}</span><span>${Math.round((i + 1) / tasks.length * 100)}%</span></div>
         <div class="progress-dots">${tasks.map((x, j) => `<i class="${ui.kid[x.id] && ui.kid[x.id].ok ? 'ok' : j === i ? 'on' : ''}"></i>`).join('')}</div>
         ${L.assessment === 'soft' ? `<div class="row" style="gap:8px"><span class="hero-char mei zh" style="width:34px;height:34px;font-size:15px">妹</span><span class="xs" style="color:#4f5b75">Сяо Мей: «Давай поиграем!»</span></div>` : ''}
         <div><div class="kid-task-title">${esc(t.title)}</div><div class="kid-ins">${esc(t.instruction)}</div></div>
@@ -875,7 +887,7 @@
         <div class="row between" style="margin-top:12px"><button class="btn sm" data-act="tvStep" data-i="${k - 1}" ${k === 0 ? 'disabled' : ''}>${icon('back', 13)}Назад</button><button class="btn sm dark" data-act="tvStep" data-i="${k + 1}" ${k >= L.steps.length - 1 ? 'disabled' : ''}>Далее ${icon('chev', 13)}</button></div>`;
     } else if (tab === 'hw') {
       const hw = L.hw;
-      inner = `<div class="tv-hw"><div class="row" style="gap:6px"><span class="chip purple">${hw.tasks.some((t) => TT[t.type].check === 'auto') ? 'Квиз' : 'Задание'}</span><span class="chip">~${hw.estimate} мин</span></div><b style="display:block;margin-top:8px;font-size:17px">${esc(hw.title)}</b><p class="small muted" style="margin:4px 0 0">${esc(hw.about || '')}</p></div>
+      inner = `<div class="tv-hw"><div class="row" style="gap:6px"><span class="chip purple">${hwKind(hw)}</span><span class="chip">~${hw.estimate} мин</span></div><b style="display:block;margin-top:8px;font-size:17px">${esc(hw.title)}</b><p class="small muted" style="margin:4px 0 0">${esc(hw.about || '')}</p></div>
         ${hw.flow ? `<div class="tv-box"><div class="eyebrow">Как ребёнок проходит ДЗ</div>${list(hw.flow)}</div>` : ''}
         ${(hw.materials || []).length ? `<div class="tv-box"><div class="eyebrow">Материалы</div>${list(hw.materials.join('\n'))}</div>` : ''}
         <p class="small"><b>Формат ответа:</b> ${esc(hw.format || '—')}, ${hw.tasks.length} ${plural(hw.tasks.length, 'задание', 'задания', 'заданий')}</p>
@@ -1363,6 +1375,8 @@
     addBlockOpt(d) { idx[d.id].options.push({ id: uid('i'), text: '', correct: false }); reindex(); save(); render(); },
     addCard() { curLesson().materials.cards.push({ id: uid('c'), zh: '', py: '', ru: '', pic: '⭐', audio: false }); reindex(); save(); render(); },
     cardsFromVocab() { const L = curLesson(); let n = 0; L.vocab.filter((w) => w.kind !== 'phrase').forEach((w) => { if (!L.materials.cards.some((c) => c.zh === w.zh)) { L.materials.cards.push({ id: uid('c'), zh: w.zh, py: w.py, ru: w.ru, pic: '⭐', audio: true }); n += 1; } }); reindex(); save(); render(); toast(n ? `Добавлено карточек: ${n}` : 'Все слова урока уже есть в наборе'); },
+    addProgRow(d) { const m = idx[d.id]; (m[d.list] = m[d.list] || []).push({ id: uid('pr'), title: '', text: '', min: '' }); reindex(); save(); render(); },
+    delProgRow(d) { const m = idx[d.id]; m[d.list] = (m[d.list] || []).filter((r) => r.id !== d.row); reindex(); save(); render(); },
     addFile() { curLesson().materials.files.push({ id: uid('fl'), title: 'Новый файл', note: '' }); reindex(); save(); render(); },
     setPv(d) { ui.pv = d.v; render(); },
     tvTab(d) { ui.tvTab = d.v; render(); },
@@ -1377,10 +1391,15 @@
           <h2 style="font-size:28px;margin:4px 0 6px">${esc(m.title)}${m.zh ? ` – <span class="zh">${esc(m.zh)}</span>` : ''}</h2>
           <p class="small muted" style="margin:0 0 10px">${esc(m.description)}</p>
           <div class="row wrap" style="gap:6px"><span class="chip purple">${icon('book', 12)}Уроков: ${ls.length}</span><span class="chip yellow">${icon('clock', 12)}Урок: ${m.lessonMin || 45} минут</span><span class="chip blue">Возраст: ${esc(m.age)}</span><span class="chip">${icon('users', 12)}Группа: ${esc(m.group || '')}</span></div>
+          <div class="row wrap xs muted" style="gap:16px;margin-top:10px"><span><b style="color:var(--foreground)">${ls.length} ${plural(ls.length, 'урок', 'урока', 'уроков')}, ${ls.reduce((a, l) => a + l.steps.length, 0)} шагов</b> в комплекте</span><span><b style="color:var(--foreground)">${ls.reduce((a, l) => a + ((l.materials || {}).cards || []).length + ((l.materials || {}).files || []).length + 1, 0)}</b> материалов</span><span><b style="color:var(--foreground)">${ls.filter((l) => l.hw.tasks.length).length}</b> ДЗ</span></div>
           <div class="card" style="margin-top:14px;padding:16px">
             <div class="eyebrow" style="margin-bottom:8px">Описание</div>
             ${m.goals ? `<p class="small"><b>Цели обучения.</b> ${esc(m.goals)}</p>` : ''}
             ${TEACHER_INFO.filter(([k]) => ti[k]).map(([k, t]) => `<p class="small"><b>${t}.</b> ${esc(ti[k])}</p>`).join('')}
+            ${(m.characters || []).length ? `<div class="eyebrow" style="margin:16px 0 8px">Персонажи уроков</div><div class="grid g2" style="gap:8px">${m.characters.map((r) => `<div class="tv-tile"><b class="small">${esc(r.title)}</b><div class="xs muted">${esc(r.text)}</div></div>`).join('')}</div>` : ''}
+            ${(m.anatomy || []).length ? `<div class="eyebrow" style="margin:16px 0 8px">Анатомия урока</div><div class="anat">${m.anatomy.map((r, i) => `<div class="tv-tile"><div class="row between xs muted"><span>Этап ${i + 1}</span><span>${esc(r.min || '')} мин</span></div><b class="small" style="display:block;margin-top:4px">${esc(r.title)}</b><div class="xs muted" style="margin-top:2px">${esc(r.text)}</div></div>`).join('')}</div>` : ''}
+            ${(m.topics || []).length ? `<div class="eyebrow" style="margin:16px 0 8px">Темы текущего комплекта</div>${m.topics.map((r) => `<p class="small" style="margin:4px 0"><b>${esc(r.title)}:</b> ${esc(r.text)}</p>`).join('')}` : ''}
+            ${(m.ecosystem || []).length ? `<div class="eyebrow" style="margin:16px 0 8px">Экосистема материалов</div><div class="grid g2" style="gap:8px">${m.ecosystem.map((r) => `<div class="tv-tile"><b class="small">${esc(r.title)}</b><div class="xs muted">${esc(r.text)}</div></div>`).join('')}</div>` : ''}
             <div class="eyebrow" style="margin:16px 0 8px">Уроки</div>
             <div style="overflow-x:auto"><table class="table"><thead><tr><th>Урок</th><th>Длительность</th><th>Шаги</th><th>Новые слова</th><th>Новые фразы</th><th>Материалы</th></tr></thead><tbody>
               ${ls.map((L) => `<tr><td class="small">Урок ${numOf(L)}. ${esc(L.title)}</td><td class="small">${L.duration} мин</td><td class="small">${L.steps.length}</td><td class="small">${L.vocab.filter((w) => w.kind !== 'phrase').length}</td><td class="small">${L.vocab.filter((w) => w.kind === 'phrase').length}</td><td class="xs muted" style="white-space:nowrap">${matCount(L)}</td></tr>`).join('')}
