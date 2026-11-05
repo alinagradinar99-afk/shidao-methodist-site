@@ -309,9 +309,9 @@
     const ls = methodLessons(m);
     const glyph = { green: '世', purple: '学', blue: '考', pink: '新' }[m.accent] || '中';
     return `<a class="card method-card" href="#method/${m.id}">
-      <div class="method-cover cover-${m.accent || 'green'}"><span class="glyph zh">${glyph}</span><span class="chip" style="background:#ffffffcc">${esc(m.age)}</span></div>
-      <div><div class="row between"><span class="xs muted">${esc(m.segment)}</span>${statusChip(m.status)}</div><h3 style="font-size:19px;margin-top:6px">${esc(m.title)}</h3><p class="small muted" style="margin:6px 0 0">${esc(m.description)}</p></div>
-      <dl class="kv"><dt>Версия</dt><dd>v${esc(m.version)} · ${esc(m.updated)}</dd><dt>Структура</dt><dd>${m.levels.length} ${plural(m.levels.length, 'уровень', 'уровня', 'уровней')} · ${ls.length} ${plural(ls.length, 'урок', 'урока', 'уроков')}</dd><dt>Назначена</dt><dd>${m.assigned.length ? `${m.assigned.length} ${plural(m.assigned.length, 'организация/группа', 'организации/группы', 'организаций/групп')}` : '—'}</dd></dl>
+      <div class="method-cover cover-${m.accent || 'green'}"><span class="glyph zh">${glyph}</span></div>
+      <div><div class="row between"><span class="xs muted">${esc(m.age)}</span>${statusChip(m.status)}</div><h3 style="font-size:19px;margin-top:6px">${esc(m.title)}</h3><p class="small muted" style="margin:6px 0 0">${esc(m.description)}</p></div>
+      <dl class="kv"><dt>Обновлена</dt><dd>${esc(m.updated)}</dd><dt>Версия</dt><dd>v${esc(m.version)}</dd><dt>Структура</dt><dd>${m.levels.length} ${plural(m.levels.length, 'уровень', 'уровня', 'уровней')}, ${ls.length} ${plural(ls.length, 'урок', 'урока', 'уроков')}</dd><dt>Назначена</dt><dd>${m.assigned.length ? `${m.assigned.length} ${plural(m.assigned.length, 'группа', 'группы', 'групп')}` : '—'}</dd></dl>
     </a>`;
   }
 
