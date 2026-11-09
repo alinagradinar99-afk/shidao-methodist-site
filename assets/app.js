@@ -41,6 +41,7 @@
   const P = {
     plus: 'M12 5v14M5 12h14', trash: 'M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6', up: 'M18 15l-6-6-6 6', down: 'M6 9l6 6 6-6',
     grip: 'M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01', play: 'M7 4l13 8-13 8z',
+    search: 'M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-5-5',
     eye: 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z', copy: 'M8 8h12v12H8zM4 16V4h12',
     clock: 'M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20zM12 6v6l4 2', check: 'M20 6L9 17l-5-5', x: 'M18 6L6 18M6 6l12 12',
     mic: 'M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3zM19 10v2a7 7 0 0 1-14 0v-2M12 19v3',
@@ -274,18 +275,30 @@
   }
 
   // ---------------------------------------------------------------- Методики
+  function methodsFiltered() {
+    const f = ui.methodsFilter, q = (ui.pQ || '').trim().toLowerCase(), age = ui.pAge || 'all';
+    return S.methods.filter((m) => (f === 'all' || (f === 'published' ? m.status === 'published' : m.status !== 'published'))
+      && (age === 'all' || m.age === age)
+      && (!q || [m.title, m.zh, m.description, m.segment, ...methodLessons(m).map((L) => L.title)].some((x) => (x || '').toLowerCase().includes(q))));
+  }
+  function methodsListInner() {
+    const list = methodsFiltered();
+    return list.length ? `<div class="grid g3">${list.map(methodCard).join('')}</div>` : `<div class="card"><div class="empty">Ничего не найдено<div class="xs muted" style="margin-top:6px">Измените запрос или сбросьте фильтры</div><button class="btn sm" style="margin-top:12px" data-act="resetMethodFilters">Сбросить</button></div></div>`;
+  }
   function vMethods() {
     const f = ui.methodsFilter;
-    const list = S.methods.filter((m) => f === 'all' || (f === 'published' ? m.status === 'published' : m.status !== 'published'));
+    const ages = [...new Set(S.methods.map((m) => m.age).filter(Boolean))];
     return `
     <h1 style="margin:0 0 28px">Программы и методики</h1>
-    <div class="row between wrap" style="margin-bottom:20px;gap:14px">
-      <div class="seg">${[['all', 'Все'], ['published', 'Опубликованы'], ['draft', 'В работе']].map(([k, t]) => `<button class="${f === k ? 'on' : ''}" data-act="filterMethods" data-v="${k}">${t}</button>`).join('')}</div>
+    <div class="row between wrap" style="margin-bottom:20px;gap:12px">
+      <div class="row wrap" style="gap:12px">
+        <label class="search-box">${icon('search', 15)}<input class="input" id="pq" placeholder="Поиск по программе или уроку" value="${esc(ui.pQ || '')}"></label>
+        <select class="select" style="width:auto" id="pAge"><option value="all">Все возрасты</option>${ages.map((a) => `<option ${ui.pAge === a ? 'selected' : ''}>${esc(a)}</option>`).join('')}</select>
+        <div class="seg">${[['all', 'Все'], ['published', 'Опубликованы'], ['draft', 'В работе']].map(([k, t]) => `<button class="${f === k ? 'on' : ''}" data-act="filterMethods" data-v="${k}">${t}</button>`).join('')}</div>
+      </div>
       <button class="btn dark" data-act="newMethod">${icon('plus', 15)}Создать курс</button>
     </div>
-    <div class="grid g3">
-      ${list.map(methodCard).join('')}
-    </div>`;
+    <div data-region="plist">${methodsListInner()}</div>`;
   }
   function methodCard(m) {
     const ls = methodLessons(m);
@@ -1117,6 +1130,7 @@
   const curStep = () => idx[ui.stepId];
   function refresh(names) { names.forEach((r) => document.querySelectorAll(`[data-region="${r}"]`).forEach((n) => { n.innerHTML = REG[r](); })); }
   const REG = {
+    plist: () => methodsListInner(),
     steps: () => stepsListInner(curLesson()),
     student: () => previewInner(curLesson()),
     hwlist: () => hwListInner(curLesson()),
@@ -1131,6 +1145,7 @@
     closeModal, closeModalBg(d, el, e) { if (e.target === el) closeModal(); },
     toast(d) { toast(d.msg); },
     filterMethods(d) { ui.methodsFilter = d.v; render(); },
+    resetMethodFilters() { ui.methodsFilter = 'all'; ui.pQ = ''; ui.pAge = 'all'; render(); },
 
     newMethod() {
       modal(`${mh('Создать курс', 'Стандартизированный шаблон методики Shidao')}
@@ -1443,6 +1458,8 @@
     if (el.dataset.sl) { idx[el.dataset.sl].softLabels[+el.dataset.i] = el.value; save(); return; }
     if (el.dataset.modk) { idx[el.dataset.modk].modules[el.dataset.m] = el.checked; save(); return; }
     if (el.id === 'mq') { ui.mQ = el.value; refresh(['mlist']); return; }
+    if (el.id === 'pq') { ui.pQ = el.value; refresh(['plist']); return; }
+    if (el.id === 'pAge') { ui.pAge = el.value; refresh(['plist']); return; }
     const { id, k } = el.dataset;
     if (!id || !k || !idx[id]) return;
     let v = el.type === 'checkbox' ? el.checked : el.value;
