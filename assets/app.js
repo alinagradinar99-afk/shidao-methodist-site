@@ -1458,7 +1458,7 @@
     if (el.dataset.sl) { idx[el.dataset.sl].softLabels[+el.dataset.i] = el.value; save(); return; }
     if (el.dataset.modk) { idx[el.dataset.modk].modules[el.dataset.m] = el.checked; save(); return; }
     if (el.id === 'mq') { ui.mQ = el.value; refresh(['mlist']); return; }
-    if (el.id === 'pq') { ui.pQ = el.value; refresh(['plist']); return; }
+    if (el.id === 'pq') { if (e.type === 'input') { ui.pQ = el.value; refresh(['plist']); } return; }
     if (el.id === 'pAge') { ui.pAge = el.value; refresh(['plist']); return; }
     const { id, k } = el.dataset;
     if (!id || !k || !idx[id]) return;
