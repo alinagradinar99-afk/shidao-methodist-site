@@ -512,3 +512,7 @@ h3 { font-size: 16px; font-weight: 800; margin: 0; }
 .search-box svg { position: absolute; left: 14px; color: var(--muted); pointer-events: none; }
 .search-box .input { padding-left: 38px; width: 280px; }
 @media (max-width: 720px) { .search-box, .search-box .input { width: 100%; } }
+
+.tab-page { max-width: 860px; }
+.prog-stats + .tabs { margin-top: 8px; }
+.program.single { grid-template-columns: minmax(0, 1fr); }

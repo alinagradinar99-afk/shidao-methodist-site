@@ -319,6 +319,8 @@
     const steps = ls.reduce((a, l) => a + l.steps.length, 0);
     const tasks = ls.reduce((a, l) => a + l.hw.tasks.length, 0);
     let n = 0;
+    if (ui.mId !== mid) { ui.mId = mid; ui.mTab = 'course'; }
+    const mt = ui.mTab || 'course';
     return `
     ${crumbs([['Программы', '#methods'], [m.title]])}
     <div class="row between wrap" style="gap:16px;align-items:flex-start">
@@ -334,9 +336,10 @@
       </div>
     </div>
     <div class="prog-stats">${[['layers', m.levels.length, ['уровень', 'уровня', 'уровней']], ['folder', modules, ['модуль', 'модуля', 'модулей']], ['book', ls.length, ['урок', 'урока', 'уроков']], ['list', steps, ['шаг', 'шага', 'шагов']], ['send', tasks, ['задание ДЗ', 'задания ДЗ', 'заданий ДЗ']]].map(([ic, v, f]) => `<span>${icon(ic, 14)}<b>${v}</b> ${plural(v, ...f)}</span>`).join('')}<span>${icon('clock', 14)}<b>${String(Math.round(ls.reduce((a, l) => a + (+l.duration || 0), 0) / 6) / 10).replace('.', ',')} ч</b> учебного времени</span></div>
-    <div class="program">
+    <div class="tabs">${[['course', 'Программа курса', 'list'], ['passport', 'Паспорт программы', 'sliders'], ['teacher', 'Описание для преподавателя', 'book']].map(([k, t, ic]) => `<button class="tab ${mt === k ? 'on' : ''}" data-act="mTab" data-v="${k}">${icon(ic, 15)}${t}</button>`).join('')}</div>
+    ${mt === 'course' ? `<div class="program single">
       <div>
-        <div class="row between" style="margin-bottom:12px"><h2>Программа курса</h2><span class="xs muted">${icon('grip', 12)} Перетаскивайте уроки между модулями</span></div>
+        <div class="row between" style="margin-bottom:12px;justify-content:flex-end"><span class="xs muted">${icon('grip', 12)} Перетаскивайте уроки между модулями</span></div>
         ${m.levels.map((v, vi) => `
           <div class="card level">
             <div class="level-h"><span class="level-num">${vi + 1}</span><input class="input bare grow" style="font-weight:800;font-size:17px" data-id="${v.id}" data-k="title" value="${esc(v.title)}">
@@ -352,9 +355,9 @@
           </div>`).join('')}
         <button class="btn" style="margin-top:16px" data-act="addLevel" data-id="${m.id}">${icon('plus', 15)}Добавить уровень</button>
       </div>
-      <aside class="side sticky">
+    </div>` : mt === 'passport' ? `<div class="tab-page">
         <div class="card">
-          <div class="card-h"><h3>Паспорт программы</h3>${icon('sliders', 16)}</div>
+          <div class="card-h"><h3>Паспорт программы</h3></div>
           <div class="stack">
             <div class="cover-pick cover-${m.accent || 'green'}"><span class="zh">${esc(m.zh || '世')}</span><button class="btn xs" data-act="fakeUpload" data-what="обложку программы">${icon('image', 12)}Обложка</button></div>
             <label class="field"><span>Название на китайском</span><input class="input zh" data-id="${m.id}" data-k="zh" value="${esc(m.zh || '')}" placeholder="我周围的世界"></label>
@@ -367,20 +370,12 @@
             <div class="hint-box">${icon('sparkle', 16)}<span>Возрастной сценарий определяет интерфейс ученика, модель прогресса (мягкая / оценки) и режим ИИ</span></div>
           </div>
         </div>
+</div>` : `<div class="tab-page">
         <div class="card">
-          <div class="card-h"><h3>Описание для преподавателя</h3><button class="btn xs" data-act="teacherProgram" data-id="${m.id}">${icon('eye', 12)}Как видит</button></div>
+          <div class="card-h"><h3>Описание для преподавателя</h3><button class="btn xs" data-act="teacherProgram" data-id="${m.id}">${icon('eye', 12)}Предпросмотр</button></div>
           <div class="stack-s">${TEACHER_INFO.map(([k, t]) => `<details class="tv-acc"><summary>${t}</summary><textarea class="textarea" style="min-height:70px;margin-top:8px" data-ti="${m.id}" data-k="${k}">${esc((m.teacherInfo || {})[k] || '')}</textarea></details>`).join('')}${progListEditor(m)}</div>
         </div>
-        <div class="card">
-          <div class="card-h"><h3>Назначена</h3><button class="btn xs" data-act="assign" data-id="${m.id}">Изменить</button></div>
-          ${m.assigned.length ? `<div class="stack-s">${S.orgs.map((o) => { const gs = o.groups.filter((g) => m.assigned.includes(g.id)); if (!gs.length && !m.assigned.includes(o.id)) return ''; return `<div class="small"><b>${esc(o.title)}</b><div class="xs muted">${gs.map((g) => esc(g.title)).join(', ') || 'вся организация'}</div></div>`; }).join('')}</div>` : '<div class="empty">Не назначена. Опубликуйте и назначьте организациям или группам</div>'}
-        </div>
-        <div class="card">
-          <div class="card-h"><h3>История версий</h3><button class="btn xs" data-act="versions" data-id="${m.id}">Все</button></div>
-          ${m.history.slice(0, 3).map((h) => `<div class="history-item"><span class="ver">v${esc(h.v)}</span><div><div>${esc(h.note)}</div><div class="xs muted">${esc(h.date)}, ${esc(h.who)}, ${STATUS[h.status]}</div></div></div>`).join('')}
-        </div>
-      </aside>
-    </div>`;
+</div>`}`;
   }
   const PROG_LISTS = [['anatomy', 'Анатомия урока', 'Этап', true], ['topics', 'Темы текущего комплекта', 'Уроки'], ['ecosystem', 'Экосистема материалов', 'Материал'], ['characters', 'Персонажи уроков', 'Персонаж']];
   const progListEditor = (m) => PROG_LISTS.map(([k, t, ph, withMin]) => `<details class="tv-acc"><summary>${t}<span class="xs muted" style="font-weight:500">${(m[k] || []).length}</span></summary><div class="stack-s" style="margin-top:8px">
@@ -1144,6 +1139,7 @@
     doReset() { S = clone(window.SEED); reindex(); save(); closeModal(); ui.stepId = null; ui.taskId = null; ui.kid = {}; go('#home'); toast('Демо-данные восстановлены'); },
     closeModal, closeModalBg(d, el, e) { if (e.target === el) closeModal(); },
     toast(d) { toast(d.msg); },
+    mTab(d) { ui.mTab = d.v; render(); },
     filterMethods(d) { ui.methodsFilter = d.v; render(); },
     resetMethodFilters() { ui.methodsFilter = 'all'; ui.pQ = ''; ui.pAge = 'all'; render(); },
 
