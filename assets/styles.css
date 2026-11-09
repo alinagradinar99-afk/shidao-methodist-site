@@ -432,7 +432,7 @@ h3 { font-size: 16px; font-weight: 800; margin: 0; }
 .zone .block-ico { width: 40px; height: 40px; border-radius: 13px; }
 .stat-row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-top: 1px solid var(--line); }
 .card-h + .stat-row { border-top: 0; }
-.stat-row .n { font-size: 14px; font-weight: 700; margin-left: auto; }
+.stat-row .n { font-size: 13px; font-weight: 700; margin-left: auto; }
 .meter { height: 8px; border-radius: 8px; background: #1414140d; overflow: hidden; }
 .meter i { display: block; height: 100%; background: #141414; border-radius: 8px; }
 .scen-grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 16px; align-items: start; }
