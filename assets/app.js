@@ -214,7 +214,6 @@
         ${item('scenarios', '#scenarios', 'Сценарии', 'users')}
       </nav>
       <div class="header-right">
-        <button class="btn icon ghost" data-act="reset" title="Сбросить демо-данные">${icon('refresh', 15)}</button>
         <div class="avatar" title="Елена Ли, методист">ЕЛ</div>
       </div>
     </header></div>`;
